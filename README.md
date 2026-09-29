@@ -2,6 +2,8 @@
 
 A Telegram bot, channel publisher, Mini App and website for one used-electronics reseller, built from one backend and one React app.
 
+History: this is a public snapshot of a private repository (51 commits, 21 to 29 Sep 2026). Client details are replaced.
+
 The seller adds a device through a step-by-step bot wizard, and the listing goes out to a Telegram channel, the Mini App and the website at once. Buyers filter listings and send a request, and the listing disappears everywhere once it is sold.
 
 ![Catalog on desktop: filters with faceted counts and a grid of listings](docs/screenshots/desktop-catalog.webp)
