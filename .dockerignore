@@ -1,0 +1,30 @@
+# Anything not explicitly COPYed by the Dockerfile doesn't need to be here,
+# but this keeps the build context small and makes sure nothing sensitive or
+# environment-specific ever ends up inside an image layer by accident.
+
+.git
+.gitignore
+
+# Python
+backend/.venv
+**/__pycache__
+**/*.pyc
+backend/.pytest_cache
+backend/tests
+
+# Node / web
+web/node_modules
+web/dist
+
+# Runtime data and secrets - never bake these into an image
+data
+*.db
+*.db-wal
+*.db-shm
+.env
+backend/.env
+.env.*
+!.env.example
+
+# Editors / OS
+.DS_Store

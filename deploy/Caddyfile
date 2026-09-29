@@ -1,0 +1,33 @@
+{$DOMAIN} {
+	encode zstd gzip
+
+	# Telegram Mini Apps are opened inside an iframe on web.telegram.org (and in
+	# the native app's WebView). Do NOT add `X-Frame-Options: DENY` or a CSP
+	# `frame-ancestors` that excludes Telegram - either one breaks the Mini
+	# App with a blank screen. If you want to restrict framing, scope it to
+	# Telegram's own origins instead of blocking everyone:
+	#   Content-Security-Policy "frame-ancestors 'self' https://web.telegram.org https://*.telegram.org"
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		X-XSS-Protection "0"
+		-Server
+	}
+
+	# One upstream is enough: the app serves the built SPA itself (see
+	# app/main.py's SPA fallback) alongside /api and /tg, so there's no
+	# separate static-file service to route to.
+	reverse_proxy app:8000 {
+		header_up X-Forwarded-Proto {scheme}
+	}
+
+	# /api/media/* already sets its own long-lived, immutable Cache-Control
+	# in app/api/public.py (media is content-addressed by file_unique_id) -
+	# nothing to override here, just don't clobber it with a blanket rule.
+
+	log {
+		output stdout
+		format console
+	}
+}

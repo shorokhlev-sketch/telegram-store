@@ -1,0 +1,37 @@
+# Secrets and local config
+.env
+.env.*
+!.env.example
+backend/.env
+web/.env*
+
+# Runtime data
+data/
+media/
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+*.db.gz
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+
+# Node / web
+node_modules/
+web/dist/
+dist/
+*.tsbuildinfo
+
+# Logs and OS files
+*.log
+logs/
+.DS_Store
+
+# Mockup render outputs
+mockups/*/port/

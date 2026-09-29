@@ -1,0 +1,55 @@
+# Production stack: app (FastAPI/aiogram, built from the repo root Dockerfile)
+# behind Caddy (TLS + reverse proxy). Bring up with:
+#
+#   DOMAIN=shop.example.com docker compose -f deploy/docker-compose.yml up -d --build
+#
+# .env (repo root, see .env.example / deploy/PROD.md) supplies every secret
+# and setting the app needs; DOMAIN only feeds the Caddyfile.
+
+# Fixed project name so volumes are always apple-store-tg_appdata etc.
+# (PROD.md restore/migrate commands rely on it), wherever the repo is cloned.
+name: apple-store-tg
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    env_file:
+      - ../.env
+    environment:
+      DB_PATH: /data/app.db
+      MEDIA_DIR: /data/media
+    volumes:
+      - appdata:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=3).status == 200 else 1)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    # No ports published: only Caddy talks to this service, on the compose
+    # network. This is also why uvicorn is started with --forwarded-allow-ips
+    # in the Dockerfile - Caddy is the only thing that can ever be the
+    # immediate peer.
+
+  caddy:
+    image: caddy:2-alpine
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    restart: unless-stopped
+
+volumes:
+  appdata:
+  caddy_data:
+  caddy_config:

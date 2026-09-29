@@ -1,0 +1,20 @@
+[Unit]
+Description=apple-store-tg - Telegram Mini App backend (staging)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/apple-store-tg/backend
+EnvironmentFile=/opt/apple-store-tg/backend/.env
+ExecStart=/opt/apple-store-tg/backend/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8090 --proxy-headers
+Restart=always
+RestartSec=5
+User=root
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/apple-store-tg
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
