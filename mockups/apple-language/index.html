@@ -1,0 +1,1150 @@
+<!doctype html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Витрина: язык Apple</title>
+<style>
+/* ---------- Tokens (NOTES.md) ---------- */
+:root{
+  --label:#1D1D1F; --label-2:#6E6E73; --label-3:#86868B; --label-4:#C7C7CC;
+  --bg:#FFFFFF; --bg-2:#FBFBFD; --elev:#FFFFFF;
+  --fill:#F5F5F7; --fill-2:#E8E8ED; --seg:rgba(118,118,128,.12);
+  --group:#F5F5F7;
+  --sep:rgba(60,60,67,.18); --sep-2:rgba(60,60,67,.29);
+  --accent:#0071E3; --accent-press:#0077ED; --accent-tint:rgba(0,113,227,.1);
+  --danger:#FF3B30; --ok:#34C759;
+  --mat:rgba(255,255,255,.72); --mat-nav:rgba(251,251,253,.8);
+  --pop-shadow:0 8px 30px rgba(0,0,0,.12),0 0 0 1px rgba(0,0,0,.06);
+  --scrim:rgba(0,0,0,.3); --veil:rgba(232,232,237,.4);
+  --knob:#FFFFFF; --seg-on:#FFFFFF; --seg-on-ink:#1D1D1F;
+  --dev-edge:rgba(0,0,0,.16);
+  --canvas:#E9E9EE; --canvas-ink:#1D1D1F;
+  --ease:cubic-bezier(.25,.1,.25,1); --ease-sheet:cubic-bezier(.32,.72,0,1);
+  --font:-apple-system,"SF Pro Text","Inter",system-ui,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,monospace;
+}
+[data-theme="dark"]{
+  --label:#F5F5F7; --label-2:#98989D; --label-3:#86868B; --label-4:#48484A;
+  --bg:#000000; --bg-2:#161617; --elev:#1C1C1E;
+  --fill:#1C1C1E; --fill-2:#2C2C2E; --seg:rgba(118,118,128,.24);
+  --group:#1C1C1E;
+  --sep:rgba(84,84,88,.6); --sep-2:rgba(84,84,88,.8);
+  --accent:#2997FF; --accent-press:#47A6FF; --accent-tint:rgba(41,151,255,.16);
+  --mat:rgba(0,0,0,.72); --mat-nav:rgba(22,22,23,.8); --seg-on:#636366; --seg-on-ink:#FFFFFF;
+  --pop-shadow:0 8px 30px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.08);
+  --scrim:rgba(0,0,0,.5); --veil:rgba(0,0,0,.4);
+  --knob:#FFFFFF;
+  --dev-edge:rgba(255,255,255,.16);
+  --canvas:#111113; --canvas-ink:#F5F5F7;
+}
+.sheet,.pop,.modal{--group:#F5F5F7}
+[data-theme="dark"] .sheet,[data-theme="dark"] .pop,[data-theme="dark"] .modal{--group:#2C2C2E;--fill:#2C2C2E;--fill-2:#3A3A3C}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body{font-family:var(--font);background:var(--canvas);color:var(--canvas-ink);font-size:17px;line-height:1.41;letter-spacing:-.022em;transition:background .25s var(--ease)}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;letter-spacing:inherit;text-align:inherit}
+a{color:inherit;text-decoration:none}
+input{font:inherit;color:inherit;letter-spacing:inherit}
+.num{font-variant-numeric:tabular-nums}
+svg{display:block}
+.press{transition:transform .2s var(--ease),background-color .2s var(--ease),color .2s var(--ease),opacity .2s var(--ease)}
+.press:active{transform:scale(.97)}
+
+/* ---------- Board ---------- */
+.board{max-width:1440px;margin:0 auto;padding:72px 80px 120px}
+.b-head{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;margin-bottom:72px}
+.b-kicker{font-size:13px;color:var(--label-3);letter-spacing:-.01em;margin-bottom:12px}
+.b-title{font-size:48px;line-height:1.08;font-weight:700;letter-spacing:-.025em;max-width:860px}
+.b-title span{color:var(--label-3)}
+.b-sub{margin-top:16px;font-size:17px;color:var(--label-2);max-width:720px}
+.b-tools{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.b-tools small{font-size:12px;color:var(--label-3);letter-spacing:0}
+.b-seg{display:flex;background:var(--seg);border-radius:999px;padding:2px}
+.b-seg button{height:28px;padding:0 14px;border-radius:999px;font-size:13px;font-weight:590;color:var(--label-2)}
+.b-seg button.on{background:var(--seg-on);color:var(--seg-on-ink);color:var(--label);box-shadow:0 1px 3px rgba(0,0,0,.12),0 0 0 .5px rgba(0,0,0,.04)}
+.b-sec{display:flex;align-items:baseline;justify-content:space-between;border-top:1px solid var(--sep);padding-top:16px;margin:0 0 40px}
+.b-sec h2{font-size:21px;font-weight:600;letter-spacing:-.02em}
+.b-sec p{font-size:13px;color:var(--label-3);letter-spacing:-.01em}
+.b-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:96px}
+.shot{width:414px;display:flex;flex-direction:column;gap:24px}
+.shot.wide{width:1280px;margin:0 auto 96px}
+.cap{display:grid;grid-template-columns:32px 1fr;column-gap:4px;padding:0 4px}
+.cap .n{font-size:15px;font-weight:600;color:var(--label-3);font-variant-numeric:tabular-nums}
+.cap .t{font-size:17px;font-weight:600;letter-spacing:-.022em}
+.cap .d{grid-column:2;font-size:14px;line-height:1.43;color:var(--label-2);margin-top:4px;letter-spacing:-.01em}
+.cap .r{grid-column:2;font-family:var(--mono);font-size:11.5px;color:var(--label-3);margin-top:10px;letter-spacing:0;line-height:1.6}
+.shot.wide .cap .d{max-width:760px}
+
+/* Notes card */
+.notes{width:414px;min-height:868px;background:var(--bg);border-radius:28px;padding:40px 36px;color:var(--label)}
+.notes h3{font-size:28px;line-height:1.14;font-weight:700;letter-spacing:-.02em}
+.notes h3 span{color:var(--label-3)}
+.notes ol{list-style:none;margin-top:28px;counter-reset:n}
+.notes li{counter-increment:n;position:relative;padding:14px 0 14px 32px;border-top:1px solid var(--sep);font-size:15px;line-height:1.4;letter-spacing:-.016em}
+.notes li::before{content:counter(n);position:absolute;left:0;top:14px;font-size:13px;font-weight:600;color:var(--label-3);font-variant-numeric:tabular-nums}
+.notes li b{font-weight:600}
+.notes li span{color:var(--label-2)}
+.notes .k{font-size:12px;color:var(--label-3);margin:28px 0 12px;letter-spacing:0}
+.swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.sw i{display:block;height:40px;border-radius:10px;box-shadow:inset 0 0 0 1px var(--sep)}
+.sw span{display:block;font-family:var(--mono);font-size:10.5px;color:var(--label-3);margin-top:6px;letter-spacing:0}
+.not{margin-top:12px;font-size:14px;color:var(--label-2);line-height:1.45}
+
+/* ---------- Phone frame ---------- */
+.device{position:relative;width:414px;height:868px;border-radius:66px;background:#1A1A1C;padding:12px;box-shadow:0 0 0 1px rgba(0,0,0,.35),inset 0 0 0 2px #3A3A3C,0 40px 80px -40px rgba(0,0,0,.35)}
+.island{position:absolute;top:23px;left:50%;width:122px;height:35px;margin-left:-61px;border-radius:20px;background:#000;z-index:200;pointer-events:none}
+.screen{position:relative;width:390px;height:844px;border-radius:54px;overflow:hidden;background:#000;isolation:isolate;color:var(--label);font-size:17px}
+.sbar{position:absolute;top:0;left:0;right:0;height:54px;z-index:150;display:flex;align-items:center;justify-content:space-between;padding:4px 32px 0 50px;pointer-events:none;color:var(--label);transition:color .3s var(--ease)}
+.sbar.light{color:#fff}
+.sbar .t{font-size:17px;font-weight:600;letter-spacing:-.02em}
+.sbar .ic{display:flex;gap:6px;align-items:center}
+.home{position:absolute;bottom:8px;left:50%;width:134px;height:5px;margin-left:-67px;border-radius:3px;background:var(--label);z-index:160;pointer-events:none}
+
+/* ---------- Mobile page ---------- */
+.page{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;background:var(--bg);scrollbar-width:none;transform-origin:50% 0;transition:transform .45s var(--ease-sheet),border-radius .45s var(--ease-sheet),filter .45s var(--ease-sheet)}
+.page::-webkit-scrollbar,.hs::-webkit-scrollbar,.sheet-body::-webkit-scrollbar,.gal::-webkit-scrollbar,.d-page::-webkit-scrollbar,.menu::-webkit-scrollbar{display:none}
+.page.pushed{transform:translateY(50px) scale(.92);border-radius:14px;filter:brightness(.72)}
+.m-top{position:sticky;top:0;z-index:20;padding-top:54px;background:var(--mat);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);transition:box-shadow .2s var(--ease)}
+.m-top.scrolled{box-shadow:0 .5px 0 var(--sep-2)}
+.m-nav{position:relative;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 8px 0 16px}
+.m-brand{font-size:17px;font-weight:600;letter-spacing:-.022em}
+.icon-btn{width:44px;height:44px;display:grid;place-items:center;color:var(--label);border-radius:22px}
+.back{display:flex;align-items:center;gap:4px;height:44px;color:var(--accent);font-size:17px;margin-left:-8px}
+.m-lotid{position:absolute;left:50%;transform:translateX(-50%);font-size:13px;color:var(--label-3);letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.ltitle{padding:4px 16px 0}
+.ltitle h1{font-size:34px;line-height:41px;font-weight:700;letter-spacing:-.012em}
+.ltitle p{font-size:15px;color:var(--label-2);letter-spacing:-.016em;margin-top:2px}
+.pills-wrap{position:relative}
+.pills{display:flex;gap:8px;padding:12px 16px;overflow-x:auto;scrollbar-width:none}
+.pill{flex:none;display:flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:999px;background:var(--fill);font-size:15px;letter-spacing:-.016em;white-space:nowrap}
+.pill svg{opacity:.7}
+.pill.on{background:var(--accent-tint);color:var(--accent)}
+.pill.on svg{opacity:1}
+.pill .badge{min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--accent);color:#fff;font-size:12px;font-weight:600;display:grid;place-items:center;letter-spacing:0;font-variant-numeric:tabular-nums}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:28px 12px;padding:8px 16px 56px}
+.tile{display:block;text-align:left;min-width:0}
+.tile-img{position:relative;aspect-ratio:1/1;border-radius:14px;background:var(--fill);display:grid;place-items:center;overflow:hidden}
+.tile-img > svg{width:86%;height:86%}
+.photo{width:92%;height:92%;object-fit:contain;mix-blend-mode:multiply}
+[data-theme="dark"] .photo{mix-blend-mode:normal;width:78%;height:78%;border-radius:10px}
+.vbadge{position:absolute;left:8px;bottom:8px;height:22px;padding:0 8px;display:flex;align-items:center;gap:5px;border-radius:11px;background:var(--mat);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);font-size:11px;font-weight:600;color:var(--label);letter-spacing:0}
+.tile-name{margin-top:10px;font-size:15px;line-height:20px;font-weight:590;letter-spacing:-.016em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tile-spec{font-size:12px;line-height:16px;color:var(--label-2);letter-spacing:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.tile-price{font-size:15px;line-height:20px;font-weight:590;margin-top:4px;letter-spacing:-.016em}
+.empty{grid-column:1/-1;padding:48px 0;text-align:center;color:var(--label-2);font-size:15px}
+
+/* popover / menu (radix-menus) */
+.pop{position:absolute;z-index:30;min-width:244px;background:var(--elev);border-radius:12px;box-shadow:var(--pop-shadow);padding:6px;animation:popIn .2s var(--ease)}
+@keyframes popIn{from{opacity:0;transform:translateY(-4px) scale(.98)}to{opacity:1;transform:none}}
+.pop-k{font-size:12px;color:var(--label-3);padding:6px 10px 4px;letter-spacing:0}
+.pop-i{width:100%;display:grid;grid-template-columns:20px 1fr auto;align-items:center;column-gap:6px;min-height:40px;padding:6px 12px 6px 8px;border-radius:8px;font-size:15px;letter-spacing:-.016em}
+.pop-i:hover{background:var(--fill)}
+.pop-i .ck{color:var(--accent)}
+.pop-i .c{font-size:13px;color:var(--label-3);font-variant-numeric:tabular-nums}
+.pop-i .ds{grid-column:2/4;font-size:12px;color:var(--label-3);line-height:1.3;letter-spacing:0}
+.pop-i.dim{color:var(--label-4);cursor:default}
+.pop-i.dim .c,.pop-i.dim .ds{color:var(--label-4)}
+.pop-i.dim:hover{background:none}
+.pop-sep{height:1px;background:var(--sep);margin:6px 10px}
+
+/* sheet */
+.scrim{position:absolute;inset:0;z-index:40;background:var(--scrim)}
+.scrim.clear{background:transparent}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:50;background:var(--elev);border-radius:20px 20px 0 0;display:flex;flex-direction:column;color:var(--label)}
+.sheet.full{top:62px;border-radius:14px 14px 0 0}
+.anim .sheet{animation:sheetUp .45s var(--ease-sheet)}
+.anim .scrim{animation:fade .35s var(--ease)}
+@keyframes sheetUp{from{transform:translateY(100%)}to{transform:none}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.grabber{width:36px;height:5px;border-radius:3px;background:var(--label-4);margin:6px auto 0;flex:none}
+.sheet-head{flex:none;height:48px;display:grid;grid-template-columns:44px 1fr 44px;align-items:center;padding:0 12px}
+.sheet-head h3{text-align:center;font-size:17px;font-weight:600;letter-spacing:-.022em}
+.x-btn{width:30px;height:30px;border-radius:15px;background:var(--seg);display:grid;place-items:center;color:var(--label-2);justify-self:end}
+.sheet-body{flex:1;overflow-y:auto;padding:0 20px 24px;scrollbar-width:none}
+.sheet-foot{flex:none;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px 20px 38px;border-top:.5px solid var(--sep-2);background:var(--elev)}
+.link-btn{font-size:17px;font-weight:590;color:var(--label);height:44px}
+.link-btn:disabled{color:var(--label-4);cursor:default}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:50px;padding:0 24px;border-radius:999px;background:var(--accent);color:#fff;font-size:17px;font-weight:590;letter-spacing:-.022em;white-space:nowrap}
+.btn:hover{background:var(--accent-press)}
+.btn:disabled{background:var(--fill-2);color:var(--label-3);cursor:default}
+.btn.tint{background:var(--accent-tint);color:var(--accent)}
+.btn.block{width:100%}
+.btn.sm{height:36px;padding:0 16px;font-size:15px}
+.f-sec{padding:24px 0;border-bottom:.5px solid var(--sep-2)}
+.f-sec:last-child{border-bottom:0}
+.f-sec h4{font-size:20px;line-height:25px;font-weight:600;letter-spacing:-.02em}
+.f-sec .sub{font-size:15px;color:var(--label-2);margin-top:2px;letter-spacing:-.016em}
+.f-sec .body{margin-top:16px}
+.group{background:var(--group);border-radius:12px;overflow:hidden}
+.grow{position:relative;width:100%;display:flex;align-items:center;gap:12px;min-height:44px;padding:0 16px;font-size:17px;letter-spacing:-.022em}
+.grow+.grow::before{content:"";position:absolute;top:0;left:16px;right:0;height:.5px;background:var(--sep-2)}
+.grow .l{flex:1;text-align:left}
+.grow .c{color:var(--label-3);font-variant-numeric:tabular-nums}
+.grow .ck{width:18px;color:var(--accent);display:grid;place-items:center}
+.grow.dim{color:var(--label-4);cursor:default}
+.grow.dim .c{color:var(--label-4)}
+.more{margin-top:12px;font-size:15px;color:var(--accent)}
+.seg{display:flex;background:var(--seg);border-radius:999px;padding:2px}
+.seg button{flex:1;text-align:center;height:32px;border-radius:999px;font-size:14px;font-weight:500;letter-spacing:-.01em;color:var(--label);transition:background .2s var(--ease),box-shadow .2s var(--ease)}
+.seg button.on{background:var(--seg-on);color:var(--seg-on-ink);font-weight:600;box-shadow:0 3px 8px rgba(0,0,0,.12),0 3px 1px rgba(0,0,0,.04),0 0 0 .5px rgba(0,0,0,.04)}
+.seg button.dim{color:var(--label-4);cursor:default}
+.seg-note{font-size:13px;color:var(--label-2);margin-top:10px;letter-spacing:-.006em;min-height:18px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:999px;background:var(--fill);font-size:15px;letter-spacing:-.016em}
+.chip .c{color:var(--label-3);font-size:13px;font-variant-numeric:tabular-nums}
+.chip.on{background:var(--accent-tint);color:var(--accent)}
+.chip.on .c{color:var(--accent);opacity:.7}
+.chip.dim{color:var(--label-4);cursor:default}
+.chip.dim .c{color:var(--label-4)}
+.chip .dot{width:12px;height:12px;border-radius:50%;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.2)}
+.hist{display:flex;align-items:flex-end;gap:3px;height:64px;padding:0 14px}
+.hist i{flex:1;border-radius:2px 2px 0 0;background:var(--fill-2);transition:background .2s var(--ease),height .25s var(--ease)}
+.hist i.in{background:var(--label-3)}
+.hist i.z{height:2px!important}
+.range{position:relative;height:28px;margin:0 14px;touch-action:none}
+.range .rail{position:absolute;left:0;right:0;top:12px;height:4px;border-radius:2px;background:var(--fill-2)}
+.range .fillr{position:absolute;top:12px;height:4px;border-radius:2px;background:var(--accent)}
+.range .knob{position:absolute;top:0;width:28px;height:28px;margin-left:-14px;border-radius:50%;background:var(--knob);box-shadow:0 .5px 4px rgba(0,0,0,.12),0 6px 13px rgba(0,0,0,.12),0 0 0 .5px rgba(0,0,0,.06);cursor:grab}
+.ticks{position:relative;height:16px;margin:6px 14px 0;font-size:11px;color:var(--label-3);letter-spacing:0;font-variant-numeric:tabular-nums}
+.ticks span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+.ticks span:first-child{transform:none}
+.ticks span:last-child{transform:translateX(-100%)}
+.minmax{display:grid;grid-template-columns:1fr 16px 1fr;align-items:center;margin-top:16px}
+.minmax .fld{background:var(--group);border-radius:12px;padding:8px 14px}
+.minmax .fld small{display:block;font-size:12px;color:var(--label-3);letter-spacing:0}
+.minmax .fld b{font-size:17px;font-weight:400;font-variant-numeric:tabular-nums}
+.minmax .dash{height:1px;width:8px;background:var(--label-3);justify-self:center}
+
+/* item page */
+.gal{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;gap:0;padding:4px 0 0}
+.gal .sl{flex:none;width:390px;padding:0 16px;scroll-snap-align:center}
+.gal .fr{aspect-ratio:1/1;border-radius:18px;background:var(--fill);display:grid;place-items:center;overflow:hidden}
+.gal .fr > svg{width:88%;height:88%}
+.dots{display:flex;justify-content:center;gap:8px;margin:14px 0 0}
+.dots i{width:7px;height:7px;border-radius:50%;background:var(--label-4);transition:background .2s var(--ease)}
+.dots i.on{background:var(--label)}
+.it-head{padding:24px 16px 0}
+.kick{font-size:13px;color:var(--label-3);letter-spacing:-.006em}
+.h2t{font-size:28px;line-height:34px;font-weight:700;letter-spacing:-.014em;margin-top:6px}
+.h2t span{color:var(--label-3)}
+.price-hero{font-size:34px;line-height:41px;font-weight:600;letter-spacing:-.012em;margin-top:16px;font-variant-numeric:tabular-nums}
+.grade-line{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:15px;color:var(--label-2);letter-spacing:-.016em}
+.grade-line b{font-weight:590;color:var(--label)}
+.sec-t{font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.018em;padding:36px 16px 12px}
+.inset{margin:0 16px}
+.srow{position:relative;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:44px;padding:11px 16px;font-size:17px;letter-spacing:-.022em}
+.srow+.srow::before{content:"";position:absolute;top:0;left:16px;right:0;height:.5px;background:var(--sep-2)}
+.srow .k{color:var(--label)}
+.srow .v{color:var(--label-2);text-align:right;font-variant-numeric:tabular-nums}
+.srow.col{flex-direction:column;align-items:stretch;gap:10px}
+.srow.col .top{display:flex;justify-content:space-between}
+.bar{height:4px;border-radius:2px;background:var(--fill-2);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:2px;background:var(--label)}
+.group .bar{background:var(--label-4)}
+[data-theme="dark"] .group .bar{background:#3A3A3C}
+.kitl{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px}
+.kitl span{display:flex;align-items:center;gap:8px;font-size:15px;letter-spacing:-.016em;color:var(--label)}
+.kitl span.no{color:var(--label-4)}
+.kitl span svg{flex:none}
+.note{margin:0 16px;padding:16px;border-radius:12px;background:var(--group)}
+.note small{display:block;font-size:13px;color:var(--label-3);letter-spacing:-.006em;margin-bottom:6px}
+.note p{font-size:17px;line-height:1.41}
+.meta{padding:20px 16px 150px;font-size:13px;color:var(--label-3);letter-spacing:-.006em;line-height:1.5}
+.abar{position:absolute;left:0;right:0;bottom:0;z-index:25;display:flex;gap:10px;padding:12px 16px 38px;background:var(--mat);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);box-shadow:0 -.5px 0 var(--sep-2)}
+.abar .btn{flex:1}
+.abar .btn.main{flex:1.35}
+
+/* buy sheet */
+.buy{padding:0 20px 38px}
+.lotline{display:flex;align-items:center;gap:12px;padding:4px 0 20px;border-bottom:.5px solid var(--sep-2)}
+.lotline .th{width:52px;height:52px;border-radius:10px;background:var(--fill);display:grid;place-items:center;flex:none;overflow:hidden}
+.lotline .th > svg{width:90%;height:90%}
+.lotline .th img{width:92%;height:92%;object-fit:contain;mix-blend-mode:multiply}
+.lotline b{display:block;font-size:15px;font-weight:590;letter-spacing:-.016em}
+.lotline span{font-size:13px;color:var(--label-2);font-variant-numeric:tabular-nums;letter-spacing:-.006em}
+.q{font-size:28px;line-height:34px;font-weight:700;letter-spacing:-.014em;margin:24px 0 20px}
+.q span{color:var(--label-3)}
+.fields{border:1px solid var(--sep-2);border-radius:12px;overflow:hidden;background:var(--elev)}
+.field{display:block;padding:9px 16px 8px;cursor:text}
+.field+.field{border-top:1px solid var(--sep)}
+.field small{display:block;font-size:12px;color:var(--label-3);letter-spacing:0;line-height:16px}
+.field input{display:block;width:100%;border:0;outline:0;background:transparent;font-size:17px;line-height:24px;padding:0}
+.field input::placeholder{color:var(--label-4)}
+.field:focus-within small{color:var(--accent)}
+.fnote{font-size:13px;line-height:18px;color:var(--label-2);margin:12px 4px 24px;letter-spacing:-.006em}
+.ferr{font-size:13px;color:var(--danger);margin:8px 4px 0}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.done{text-align:center;padding:24px 8px 8px}
+.done .okc{width:56px;height:56px;border-radius:50%;background:var(--ok);display:grid;place-items:center;margin:0 auto 20px;color:#fff}
+.done h4{font-size:28px;line-height:34px;font-weight:700;letter-spacing:-.014em}
+.done p{font-size:17px;color:var(--label-2);margin:8px 0 28px}
+
+/* mobile menu (apple-mobile-nav) */
+.menu{position:absolute;inset:0;z-index:60;background:var(--bg);overflow:hidden;color:var(--label)}
+.anim-menu{animation:fade .25s var(--ease)}
+.menu-bar{position:absolute;top:54px;left:0;right:0;height:44px;display:flex;justify-content:space-between;align-items:center;padding:0 8px;z-index:2}
+.menu-track{position:absolute;top:98px;bottom:0;left:0;width:200%;display:flex;transition:transform .4s var(--ease-sheet)}
+.menu-track.sub{transform:translateX(-50%)}
+.menu-p{width:50%;padding:20px 32px 40px 48px;overflow-y:auto;scrollbar-width:none}
+.mi{width:100%;display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:6px 0;font-size:28px;line-height:36px;font-weight:600;letter-spacing:-.014em;text-align:left}
+.mi .c{font-size:17px;font-weight:400;color:var(--label-3);letter-spacing:-.022em;font-variant-numeric:tabular-nums}
+.mi.dim{color:var(--label-4);cursor:default}
+.mi.dim .c{color:var(--label-4)}
+.mk{font-size:13px;color:var(--label-3);margin:40px 0 10px;letter-spacing:-.006em}
+.ms{width:100%;display:flex;justify-content:space-between;align-items:baseline;padding:7px 0;font-size:17px;font-weight:590;letter-spacing:-.022em;text-align:left}
+.ms .c{font-weight:400;color:var(--label-3);font-variant-numeric:tabular-nums}
+.ms.dim{color:var(--label-4);cursor:default}
+.ms.dim .c{color:var(--label-4)}
+.menu-foot{margin-top:48px;font-size:12px;color:var(--label-3);letter-spacing:0;line-height:1.5}
+
+/* ---------- Desktop window ---------- */
+.win{width:1280px;height:820px;border-radius:12px;overflow:hidden;background:var(--bg);box-shadow:0 0 0 1px rgba(0,0,0,.12),0 50px 100px -50px rgba(0,0,0,.35);display:flex;flex-direction:column;color:var(--label)}
+[data-theme="dark"] .win{box-shadow:0 0 0 1px rgba(255,255,255,.12),0 50px 100px -50px rgba(0,0,0,.6)}
+.win-bar{flex:none;height:40px;display:grid;grid-template-columns:120px 1fr 120px;align-items:center;padding:0 14px;background:var(--bg-2);border-bottom:1px solid var(--sep)}
+.win-bar .dots3{display:flex;gap:8px}
+.win-bar .dots3 i{width:12px;height:12px;border-radius:50%;background:var(--fill-2);box-shadow:inset 0 0 0 .5px var(--sep)}
+.url{justify-self:center;width:440px;height:26px;border-radius:7px;background:var(--fill);display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;color:var(--label-2);letter-spacing:-.006em}
+.win-body{position:relative;flex:1;overflow:hidden}
+.d-page{position:absolute;inset:0;overflow-y:auto;padding-top:44px;scrollbar-width:none;transition:filter .3s var(--ease)}
+.d-page.under{filter:blur(18px)}
+.gnav{position:absolute;top:0;left:0;right:0;height:44px;z-index:40;background:var(--mat-nav);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px)}
+.gnav.flat{background:var(--bg-2)}
+.gnav-in{max-width:1024px;height:44px;margin:0 auto;padding:0 22px;display:flex;align-items:center;justify-content:space-between}
+.gnav .brand{font-size:14px;font-weight:600;letter-spacing:-.016em}
+.gnav .it{height:44px;display:flex;align-items:center;font-size:12px;letter-spacing:-.01em;color:var(--label);opacity:.8;transition:opacity .2s var(--ease)}
+.gnav .it:hover,.gnav .it.on{opacity:1}
+.gnav .tg{font-size:12px;color:var(--label);opacity:.8;letter-spacing:-.01em}
+.veil{position:absolute;inset:44px 0 0;z-index:30;background:var(--veil);animation:fade .25s var(--ease)}
+.flyout{position:absolute;top:44px;left:0;right:0;z-index:35;background:var(--bg-2);animation:flyIn .3s var(--ease)}
+@keyframes flyIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.fly-in{max-width:1024px;margin:0 auto;padding:40px 22px 72px 22px;display:grid;grid-template-columns:260px 170px 170px 1fr;column-gap:48px}
+.fk{font-size:12px;color:var(--label-3);letter-spacing:0;margin-bottom:14px}
+.fb{display:flex;align-items:baseline;gap:10px;font-size:24px;line-height:32px;font-weight:600;letter-spacing:-.016em;padding:2px 0;text-align:left}
+.fb .c{font-size:17px;font-weight:400;color:var(--label-3);letter-spacing:-.022em;font-variant-numeric:tabular-nums}
+.fs{display:flex;justify-content:space-between;width:100%;font-size:12px;line-height:18px;font-weight:600;letter-spacing:-.006em;padding:3px 0;text-align:left}
+.fs .c{font-weight:400;color:var(--label-3);font-variant-numeric:tabular-nums}
+.fs.dim{color:var(--label-4);cursor:default}
+.fs.dim .c{color:var(--label-4)}
+.fn{width:100%;display:grid;grid-template-columns:56px 1fr;gap:12px;align-items:center;padding:4px 0 12px;text-align:left}
+.fn .th{width:56px;height:56px;border-radius:10px;background:var(--fill);display:grid;place-items:center;overflow:hidden}
+.fn .th > svg{width:90%;height:90%}
+.fn .th img{width:92%;height:92%;object-fit:contain;mix-blend-mode:multiply}
+.fn b{display:block;font-size:12px;font-weight:600;letter-spacing:-.006em}
+.fn span{font-size:12px;color:var(--label-3);font-variant-numeric:tabular-nums}
+.lnav{position:sticky;top:0;z-index:20;height:52px;background:var(--mat-nav);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);box-shadow:0 1px 0 var(--sep)}
+.lnav-in{max-width:1024px;height:52px;margin:0 auto;padding:0 22px;display:flex;align-items:center;justify-content:space-between}
+.lnav h2{font-size:21px;font-weight:600;letter-spacing:-.018em}
+.lnav .r{display:flex;align-items:center;gap:20px;font-size:12px;color:var(--label-2);letter-spacing:-.006em}
+.lnav .r a{color:var(--accent)}
+.crumbs{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--label-2);letter-spacing:-.006em}
+.crumbs button{color:var(--accent)}
+.d-wrap{max-width:1180px;margin:0 auto;padding:0 50px}
+.d-hero{padding:48px 0 36px}
+.d-hero h1{font-size:32px;line-height:38px;font-weight:700;letter-spacing:-.02em;max-width:820px}
+.d-hero h1 span{color:var(--label-3)}
+.fbar{height:56px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--sep);border-bottom:1px solid var(--sep);margin:0 -50px;padding:0 50px}
+.fbar .l{display:flex;align-items:center;gap:16px}
+.fbar .tgl{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--label);letter-spacing:-.006em}
+.fbar .ap{display:flex;gap:8px}
+.fbar .apc{height:26px;display:flex;align-items:center;gap:6px;padding:0 10px;border-radius:999px;background:var(--accent-tint);color:var(--accent);font-size:12px;font-weight:500;letter-spacing:-.006em}
+.fbar .sort{font-size:12px;color:var(--label-2);letter-spacing:-.006em}
+.fbar .sort b{color:var(--label);font-weight:500}
+.d-cat{display:grid;grid-template-columns:220px 1fr;margin:0 -50px 0 0}
+.d-cat.nosb{grid-template-columns:0 1fr}
+.sb{padding:24px 28px 64px 0;border-right:1px solid var(--sep);overflow:hidden}
+.nosb .sb{padding:0;border:0}
+.acc{border-bottom:1px solid var(--sep)}
+.acc-h{width:100%;height:48px;display:flex;align-items:center;justify-content:space-between;font-size:17px;font-weight:600;letter-spacing:-.022em}
+.acc-h svg{color:var(--label-2);transition:transform .25s var(--ease)}
+.acc.open .acc-h svg{transform:rotate(180deg)}
+.acc-b{padding:2px 0 16px}
+.av{width:100%;display:flex;align-items:center;justify-content:space-between;height:32px;font-size:14px;letter-spacing:-.01em;text-align:left}
+.av .c{font-size:12px;color:var(--label-3);font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:6px}
+.av.on{color:var(--accent);font-weight:500}
+.av.on .c{color:var(--accent)}
+.av.dim{color:var(--label-4);cursor:default}
+.av.dim .c{color:var(--label-4)}
+.dgrid{display:grid;grid-template-columns:repeat(3,1fr);align-content:start}
+.dcell{display:flex;flex-direction:column;align-items:center;text-align:center;padding:36px 28px 40px;border-right:1px solid var(--sep);border-bottom:1px solid var(--sep);min-width:0}
+.dcell .im{width:100%;height:210px;display:grid;place-items:center;position:relative}
+.dcell .im > svg{width:210px;height:210px}
+.dcell .im img{width:200px;height:200px;object-fit:contain;mix-blend-mode:multiply}
+[data-theme="dark"] .dcell .im img{mix-blend-mode:normal;width:170px;height:170px;border-radius:12px}
+.dcell .im .vbadge{left:auto;right:auto;bottom:0}
+.dcell .nm{margin-top:20px;font-size:14px;line-height:20px;font-weight:600;letter-spacing:-.01em;max-width:240px}
+.dcell .sp{margin-top:4px;font-size:12px;color:var(--label-2);letter-spacing:-.006em}
+.dcell .pr{margin-top:8px;font-size:14px;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+
+/* desktop item */
+.d-item{display:grid;grid-template-columns:1fr 380px;gap:72px;padding:40px 0 96px}
+.d-gal .big{height:440px;border-radius:18px;background:var(--fill);display:grid;place-items:center;overflow:hidden}
+.d-gal .big > svg{width:400px;height:400px}
+.d-gal .big img{width:380px;height:380px;object-fit:contain;mix-blend-mode:multiply}
+.thumbs{display:flex;gap:12px;margin-top:12px}
+.thumbs button{width:76px;height:76px;border-radius:12px;background:var(--fill);display:grid;place-items:center;overflow:hidden;box-shadow:inset 0 0 0 0 var(--accent);transition:box-shadow .2s var(--ease)}
+.thumbs button.on{box-shadow:inset 0 0 0 2px var(--accent)}
+.thumbs button > svg{width:92%;height:92%}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);margin-top:56px;border-top:1px solid var(--sep)}
+.stat{padding:28px 16px 0 0}
+.stat b{display:block;font-size:40px;line-height:44px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stat span{display:block;font-size:14px;color:var(--label-2);margin-top:8px;letter-spacing:-.01em;line-height:1.35}
+.d-sect{font-size:28px;line-height:32px;font-weight:700;letter-spacing:-.018em;margin:64px 0 16px}
+.tbl{border-top:1px solid var(--sep)}
+.tr{display:grid;grid-template-columns:240px 1fr;gap:24px;padding:14px 0;border-bottom:1px solid var(--sep);font-size:15px;letter-spacing:-.016em;align-items:center}
+.tr .k{color:var(--label-2)}
+.tr .v{font-variant-numeric:tabular-nums}
+.tr .v .bar{width:200px;margin-top:8px}
+.tr .v .mute{color:var(--label-2)}
+.sum{position:sticky;top:92px;align-self:start}
+.sum .h2t{font-size:32px;line-height:38px}
+.sum .price-hero{font-size:40px;line-height:48px;margin-top:20px}
+.sum .acts{display:flex;flex-direction:column;gap:10px;margin-top:28px}
+.sum .fnote{margin:14px 0 0}
+.card{margin-top:32px;border-radius:18px;background:var(--fill);padding:20px}
+.card h5{font-size:15px;font-weight:600;letter-spacing:-.016em;margin-bottom:12px}
+.card + .card{margin-top:12px}
+.card p{font-size:15px;line-height:1.47;letter-spacing:-.016em}
+.modal-wrap{position:absolute;inset:0;z-index:60;display:grid;place-items:center;background:var(--scrim);animation:fade .25s var(--ease)}
+.modal{width:460px;background:var(--elev);border-radius:20px;box-shadow:0 30px 80px rgba(0,0,0,.25);padding:8px 8px 0;animation:popIn .3s var(--ease)}
+.modal .buy{padding:0 24px 28px}
+</style>
+</head>
+<body>
+<div class="board">
+  <header class="b-head">
+    <div>
+      <div class="b-kicker" data-shop-kicker></div>
+      <h1 class="b-title">Витрина б/у-техники. <span>В сервисном языке Apple: тихо, крупно, одно действие на экран.</span></h1>
+      <p class="b-sub">Семь экранов одного фронта: Mini App и сайт. Данные: двенадцать примерных лотов. Экраны кликаются: пилюли, шторки, фильтры, «Купить», меню.</p>
+    </div>
+    <div class="b-tools">
+      <div class="b-seg" id="theme">
+        <button class="on" data-t="light">Светлая</button>
+        <button data-t="dark">Тёмная</button>
+      </div>
+      <small>Превью токенов тёмной темы</small>
+    </div>
+  </header>
+
+  <div class="b-sec"><h2>Телефон</h2><p>390 × 844 · Mini App и мобильный сайт</p></div>
+  <div class="b-row">
+    <figure class="shot"><div class="device"><div class="island"></div><div class="screen" id="m1"></div></div>
+      <figcaption class="cap"><span class="n">01</span><span class="t">Каталог</span>
+        <span class="d">Крупный заголовок, ряд пилюль, сетка плиток. Открыто меню «Устройство»: при фильтре «Идеал» часов нет, и пункт остаётся на месте светло-серым.</span>
+        <span class="r">apple-refurb · teenage-store · airbnb-search · radix-menus · apple-buy-iphone-mobile</span></figcaption></figure>
+    <figure class="shot"><div class="device"><div class="island"></div><div class="screen" id="m2"></div></div>
+      <figcaption class="cap"><span class="n">02</span><span class="t">Фильтры</span>
+        <span class="d">Шторка поверх сдвинутого каталога. Цена: гистограмма и двойной слайдер с шагами по ценовым тегам. Внизу «Сбросить» и кнопка с живым счётчиком.</span>
+        <span class="r">airbnb-search · airbnb-mobile · apple-refurb · apple-hig</span></figcaption></figure>
+    <figure class="shot"><div class="device"><div class="island"></div><div class="screen" id="m3"></div></div>
+      <figcaption class="cap"><span class="n">03</span><span class="t">Карточка лота</span>
+        <span class="d">Галерея с точками, заголовок в два тона, цена крупно, характеристики инсет-группой. Батарея показана числом и полосой, комплект списком. Панель действий всегда видна.</span>
+        <span class="r">apple-buy-iphone-mobile · cash-app · apple-hig · apple-compare</span></figcaption></figure>
+  </div>
+  <div class="b-row">
+    <figure class="shot"><div class="device"><div class="island"></div><div class="screen" id="m4"></div></div>
+      <figcaption class="cap"><span class="n">04</span><span class="t">Купить</span>
+        <span class="d">Один вопрос на экран. Поля в общей рамке с разделителем 1px, одна залитая кнопка. В Telegram этого шага нет: заявка уходит в один тап из initData.</span>
+        <span class="r">apple-buy-iphone · stripe-checkout · apple-support</span></figcaption></figure>
+    <figure class="shot"><div class="device"><div class="island"></div><div class="screen" id="m5"></div></div>
+      <figcaption class="cap"><span class="n">05</span><span class="t">Меню</span>
+        <span class="d">Полноэкранное меню: пункты 28px и счётчики серым. Нажатие на раздел сдвигает экран вбок, пустые значения приглушены.</span>
+        <span class="r">apple-mobile-nav · apple-globalnav</span></figcaption></figure>
+    <div class="shot">
+      <div class="notes" id="notes"></div>
+    </div>
+  </div>
+
+  <div class="b-sec"><h2>Десктоп</h2><p>1280 · тот же фронт в браузере</p></div>
+  <figure class="shot wide"><div class="win" id="d1"></div>
+    <figcaption class="cap"><span class="n">06</span><span class="t">Каталог</span>
+      <span class="d">Тонкий глобальный навбар, локальная шапка раздела, слева фильтры-аккордеоны с приглушёнными значениями, справа сетка на волосяных линиях. Наведите на раздел в навбаре, и откроется флайаут.</span>
+      <span class="r">apple-globalnav · apple-refurb · teenage-store</span></figcaption></figure>
+  <figure class="shot wide"><div class="win" id="d2"></div>
+    <figcaption class="cap"><span class="n">06b</span><span class="t">Каталог с открытым флайаутом</span>
+      <span class="d">Мегаменю раздела Mac: крупная первая колонка, рядом мелкие списки с серым кикером. Страница под меню размыта, пустые значения приглушены.</span>
+      <span class="r">apple-globalnav · stripe-megamenu · vercel-nav</span></figcaption></figure>
+  <figure class="shot wide"><div class="win" id="d3"></div>
+    <figcaption class="cap"><span class="n">07</span><span class="t">Карточка лота</span>
+      <span class="d">Две колонки. Правая колонка со сводкой липкая: цена и два действия всегда перед глазами. Слева галерея, крупные цифры-якоря и таблица, где отсутствующее помечено тире.</span>
+      <span class="r">apple-buy-iphone · apple-compare · cash-app</span></figcaption></figure>
+</div>
+
+<script>
+/* ============ Constants ============ */
+const SHOP = "Apple Resale";
+const SITE = "shop.example.com";
+const TODAY = new Date("2026-09-28T12:00:00");
+
+const DEVICE = {phone:"Телефон", laptop:"Ноутбук", tablet:"Планшет", watch:"Часы", earbuds:"Наушники"};
+const DEVICE_PL = {phone:"Телефоны", laptop:"Ноутбуки", tablet:"Планшеты", watch:"Часы", earbuds:"Наушники"};
+const GRADE = {
+  A:{short:"Идеал", long:"Без следов использования"},
+  B:{short:"Хорошее", long:"Лёгкие следы, заметные вблизи"},
+  C:{short:"Заметные следы", long:"Царапины и потёртости видны сразу"}
+};
+const KIT = [["box","Коробка"],["cable","Кабель"],["adapter","Адаптер"],["receipt","Чек"]];
+const BATT = [["100","100%"],["90plus","90–99%"],["85plus","85–89%"],["below85","Ниже 85%"]];
+const PRICE = [["0-30k","До 30 тыс."],["30-60k","30–60 тыс."],["60-100k","60–100 тыс."],["100k-plus","От 100 тыс."]];
+const STOPS = [0,30000,60000,100000,180000];
+const CATS = [
+  {k:"iphone", name:"iPhone", sel:{device:["phone"], brand:["Apple"]}},
+  {k:"ipad", name:"iPad", sel:{device:["tablet"], brand:["Apple"]}},
+  {k:"mac", name:"Mac", sel:{device:["laptop"], brand:["Apple"]}},
+  {k:"watch", name:"Watch", sel:{device:["watch"], brand:["Apple"]}},
+  {k:"airpods", name:"AirPods", sel:{device:["earbuds"], brand:["Apple"]}},
+  {k:"other", name:"Другие устройства", sel:{brand:["Samsung","Xiaomi","Lenovo"]}}
+];
+
+/* Lots: plausible examples */
+const LOTS = [
+  {id:"K7Q2MD", device:"phone", cat:"iphone", brand:"Apple", model:"iPhone 15 Pro", storage:256, variant:null, color:"Natural Titanium", hex:"#BDB6AA", battery:89, grade:"A", kit:["box","cable"], price:72000, pub:"2026-09-27",
+   note:"Один владелец, с первого дня в чехле и под стеклом. Face ID и камеры в порядке, аккумулятор не менялся.", art:{kind:"phone", cam:"pro", pal:["#1B1A17","#2C2A25","#3D3A33"]}},
+  {id:"M2A13N", device:"laptop", cat:"mac", brand:"Apple", model:"MacBook Air 13″ M2", storage:256, variant:"8 ГБ", color:"Midnight", hex:"#2E3441", battery:91, grade:"A", kit:["box","adapter","cable"], price:74000, pub:"2026-09-27",
+   note:"142 цикла зарядки. Работал для учёбы, всегда в чехле-конверте.", art:{kind:"laptop", notch:true, pal:["#1B2230","#26324A","#34476A"]}},
+  {id:"S23CRM", device:"phone", cat:"other", brand:"Samsung", model:"Galaxy S23", storage:256, variant:"8 ГБ", color:"Cream", hex:"#EAE3D3", battery:90, grade:"B", kit:["box"], price:38000, pub:"2026-09-26", video:true,
+   note:"Пара микроцарапин на экране, видны только под углом. В видео экран на белом фоне.", art:{kind:"phone", cam:"s23"}},
+  {id:"W9M45B", device:"watch", cat:"watch", brand:"Apple", model:"Apple Watch Series 9", storage:null, variant:"45 мм", color:"Midnight", hex:"#2C3038", battery:88, grade:"B", kit:["cable"], price:21000, pub:"2026-09-26",
+   note:"Мелкие следы на корпусе. Ремешок Sport Band M/L.", art:{kind:"watch", band:"#343A46"}},
+  {id:"IPA11B", device:"tablet", cat:"ipad", brand:"Apple", model:"iPad Air 11″ M2", storage:128, variant:null, color:"Blue", hex:"#B8C6D5", battery:97, grade:"A", kit:["box","cable"], price:52000, pub:"2026-09-25",
+   note:"Wi‑Fi. Пользовались пару месяцев, только дома.", art:{kind:"tablet", pal:["#1A2533","#27405A","#3B5E80"]}},
+  {id:"AIRSB5", device:"phone", cat:"iphone", brand:"Apple", model:"iPhone Air", storage:512, variant:null, color:"Space Black", hex:"#2B2B2D", battery:98, grade:"B", kit:[], price:61000, pub:"2026-09-24",
+   note:"Мелкие следы на рамке, экран без царапин.", art:{kind:"phone", cam:"dual"},
+   seller:"https://t.me/shop_owner?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%2C%20%D0%B8%D0%BD%D1%82%D0%B5%D1%80%D0%B5%D1%81%D1%83%D0%B5%D1%82%20iPhone%20Air%20512%20%D0%93%D0%91%2C%20Space%20Black%2C%20%D0%BB%D0%BE%D1%82%20AIRSB5"},
+  {id:"AIRCW5", device:"phone", cat:"iphone", brand:"Apple", model:"iPhone Air", storage:512, variant:null, color:"Cloud White", hex:"#F2F2F0", battery:95, grade:"B", kit:["receipt"], price:68000, pub:"2026-09-24",
+   note:"", art:{kind:"phone", cam:"dual"},
+   seller:"https://t.me/shop_owner?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%2C%20%D0%B8%D0%BD%D1%82%D0%B5%D1%80%D0%B5%D1%81%D1%83%D0%B5%D1%82%20iPhone%20Air%20512%20%D0%93%D0%91%2C%20Cloud%20White%2C%20%D0%BB%D0%BE%D1%82%20AIRCW5"},
+  {id:"M3P14K", device:"laptop", cat:"mac", brand:"Apple", model:"MacBook Pro 14″ M3 Pro", storage:512, variant:"18 ГБ", color:"Space Black", hex:"#2F2F31", battery:96, grade:"A", kit:["box","adapter","cable","receipt"], price:165000, pub:"2026-09-23",
+   note:"Куплен в декабре 2023, чек сохранился. 64 цикла зарядки. Продаю, потому что перешёл на стационарный Mac.", art:{kind:"laptop", notch:true, pal:["#1C1D24","#2C2E3A","#3F4252"]}},
+  {id:"APP2UC", device:"earbuds", cat:"airpods", brand:"Apple", model:"AirPods Pro 2", storage:null, variant:"USB‑C", color:"White", hex:"#F7F7F7", battery:null, grade:"A", kit:["box","cable"], price:14500, pub:"2026-09-22",
+   note:"Амбушюры M новые, S и L в коробке.", art:{kind:"earbuds"}},
+  {id:"I13BLU", device:"phone", cat:"iphone", brand:"Apple", model:"iPhone 13", storage:128, variant:null, color:"Blue", hex:"#4E6C85", battery:84, grade:"B", kit:[], price:29500, pub:"2026-09-21",
+   note:"Потёртости на рамке, экран без царапин. Аккумулятор родной.", art:{kind:"phone", cam:"dual"}},
+  {id:"TPX1C9", device:"laptop", cat:"other", brand:"Lenovo", model:"ThinkPad X1 Carbon Gen 9", storage:512, variant:"16 ГБ", color:"Black", hex:"#1E1E1F", battery:82, grade:"C", kit:["adapter"], price:42000, pub:"2026-09-20",
+   note:"2021 год. Следы на крышке и у тачпада, клавиатура и петли в порядке. Windows 11 Pro.", art:{kind:"laptop", notch:false, pal:["#0F1B2A","#15304D","#1E4470"]}},
+  {id:"RN13MG", device:"phone", cat:"other", brand:"Xiaomi", model:"Redmi Note 13", storage:256, variant:"8 ГБ", color:"Mint Green", hex:"#CFE2D5", battery:95, grade:"A", kit:["box","cable","adapter"], price:14000, pub:"2026-09-19",
+   note:"Месяц был запасным телефоном.", art:{kind:"phone", cam:"redmi"}}
+];
+const byId = id => LOTS.find(l => l.id === id);
+const shortModel = m => m.replace(" 13″ M2"," 13″").replace(" 14″ M3 Pro"," 14″").replace(" Carbon Gen 9"," Carbon");
+
+/* ============ Helpers ============ */
+const rub = n => n.toLocaleString("ru-RU").replace(/\s/g, " ") + " ₽";
+const plural = (n, a, b, c) => { const m10 = n % 10, m100 = n % 100; return (m10 === 1 && m100 !== 11) ? a : (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) ? b : c; };
+const offers = n => n + " " + plural(n, "предложение", "предложения", "предложений");
+const MONTHS = ["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
+const dateLong = s => { const d = new Date(s + "T12:00:00"); return d.getDate() + " " + MONTHS[d.getMonth()]; };
+const dateRel = s => { const d = new Date(s + "T12:00:00"); const days = Math.round((TODAY - d) / 864e5); return days === 0 ? "сегодня" : days === 1 ? "вчера" : dateLong(s); };
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+const battBand = b => b == null ? null : b >= 100 ? "100" : b >= 90 ? "90plus" : b >= 85 ? "85plus" : "below85";
+const priceBand = p => p < 30000 ? "0-30k" : p < 60000 ? "30-60k" : p < 100000 ? "60-100k" : "100k-plus";
+const memStr = l => l.device === "laptop" ? `${parseInt(l.variant)}/${l.storage} ГБ` : l.storage ? `${l.storage} ГБ` : l.variant || "";
+function specLine(l){ const p = [memStr(l), GRADE[l.grade].short]; if (l.battery != null) p.push("АКБ " + l.battery + "%"); return p.filter(Boolean).join(" · "); }
+function headParts(l){
+  let rest;
+  if (l.device === "laptop") rest = `${l.variant} памяти, ${l.storage} ГБ SSD, ${l.color}.`;
+  else if (l.storage) rest = `${l.storage} ГБ, ${l.color}.`;
+  else rest = `${l.variant}, ${l.color}.`;
+  return [l.model + ".", rest];
+}
+
+/* Tag groups: AND across groups, OR inside */
+const GROUPS = [
+  {k:"device", label:"Устройство", vals:l=>[l.device], order:["phone","laptop","tablet","watch","earbuds"], lab:v=>DEVICE[v]},
+  {k:"brand", label:"Производитель", vals:l=>[l.brand], order:["Apple","Samsung","Xiaomi","Lenovo"], lab:v=>v},
+  {k:"model", label:"Модель", vals:l=>[l.model], order:null, lab:v=>v},
+  {k:"storage", label:"Память", vals:l=>l.storage ? [String(l.storage)] : [], order:["128","256","512"], lab:v=>v + " ГБ"},
+  {k:"color", label:"Цвет", vals:l=>[l.color], order:null, lab:v=>v},
+  {k:"grade", label:"Состояние", vals:l=>[l.grade], order:["A","B","C"], lab:v=>GRADE[v].short},
+  {k:"battery", label:"Батарея", vals:l=>l.battery == null ? [] : [battBand(l.battery)], order:BATT.map(b=>b[0]), lab:v=>BATT.find(b=>b[0]===v)[1]},
+  {k:"kit", label:"Комплект", vals:l=>l.kit, order:KIT.map(k=>k[0]), lab:v=>KIT.find(k=>k[0]===v)[1]},
+  {k:"price", label:"Цена", vals:l=>[priceBand(l.price)], order:PRICE.map(p=>p[0]), lab:v=>PRICE.find(p=>p[0]===v)[1]}
+];
+const G = Object.fromEntries(GROUPS.map(g => [g.k, g]));
+(function fillOrders(){
+  const byCount = k => { const m = {}; LOTS.forEach(l => G[k].vals(l).forEach(v => m[v] = (m[v]||0) + 1)); return Object.keys(m).sort((a,b)=>m[b]-m[a] || a.localeCompare(b)); };
+  G.model.order = byCount("model"); G.color.order = byCount("color");
+})();
+const emptySel = () => Object.fromEntries(GROUPS.map(g => [g.k, new Set()]));
+const mkSel = o => { const s = emptySel(); for (const k in (o||{})) o[k].forEach(v => s[k].add(v)); return s; };
+function matches(l, sel, except){
+  for (const g of GROUPS){ if (g.k === except) continue; const s = sel[g.k]; if (!s || !s.size) continue; if (!g.vals(l).some(v => s.has(v))) return false; }
+  return true;
+}
+const results = sel => LOTS.filter(l => matches(l, sel)).sort((a,b) => b.pub.localeCompare(a.pub));
+function facet(k, sel, pool = LOTS){
+  const g = G[k]; const base = pool.filter(l => matches(l, sel, k));
+  return g.order.map(v => ({v, label:g.lab(v), n:base.filter(l => g.vals(l).includes(v)).length, on:sel[k].has(v)}));
+}
+const selCount = sel => GROUPS.reduce((a,g) => a + sel[g.k].size, 0);
+function catOf(sel){
+  for (const c of CATS){ let ok = true;
+    for (const g of GROUPS){ const want = c.sel[g.k] || []; const have = [...sel[g.k]];
+      if (want.length !== have.length || !want.every(v => sel[g.k].has(v))) { ok = false; break; } }
+    if (ok) return c; }
+  return null;
+}
+const catLots = c => LOTS.filter(l => l.cat === c.k);
+
+/* ============ Icons (1.5px line, SF Symbols-like) ============ */
+const sv = (w, h, d, sw = 1.5, extra = "") => `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" ${extra}>${d}</svg>`;
+const I = {
+  chevD: sv(10,10,'<path d="M1.5 3.5 5 7l3.5-3.5"/>'),
+  chevD14: sv(14,14,'<path d="M2.5 5 7 9.5 11.5 5"/>',1.6),
+  chevR: sv(7,12,'<path d="M1.5 1.5 6 6l-4.5 4.5"/>'),
+  back: sv(12,20,'<path d="M10 2 2 10l8 8"/>',2.2),
+  x: sv(12,12,'<path d="M2 2l8 8M10 2l-8 8"/>',1.8),
+  xs: sv(8,8,'<path d="M1.2 1.2l5.6 5.6M6.8 1.2 1.2 6.8"/>',1.4),
+  xl: sv(18,18,'<path d="M3 3l12 12M15 3 3 15"/>',1.5),
+  menu: sv(18,18,'<path d="M2.5 6.5h13M2.5 11.5h13"/>',1.5),
+  sliders: sv(16,16,'<path d="M1.5 4.5h7.5M13.5 4.5h1M1.5 11.5h1M7 11.5h7.5"/><circle cx="11.2" cy="4.5" r="2.1"/><circle cx="4.8" cy="11.5" r="2.1"/>',1.4),
+  check: sv(14,14,'<path d="M2.5 7.4 5.6 10.4 11.5 3.6"/>',1.8),
+  checkS: sv(12,12,'<path d="M2 6.3 4.8 9 10 3"/>',1.6),
+  dash: sv(12,12,'<path d="M2.5 6h7"/>',1.5),
+  play: '<svg width="7" height="8" viewBox="0 0 7 8"><path d="M0 0l7 4-7 4z" fill="currentColor"/></svg>',
+  lock: sv(10,12,'<rect x="1.5" y="5" width="7" height="5.5" rx="1.2"/><path d="M3 5V3.6a2 2 0 0 1 4 0V5"/>',1.2),
+  okBig: sv(28,28,'<path d="M6 14.5 11.5 20 22.5 8"/>',2.6),
+  tg: sv(14,14,'<path d="M12.5 2 1.5 6.5l4 1.5M12.5 2 10.5 12l-5-4M12.5 2 5.5 8v3.5l2-2"/>',1.3)
+};
+const statusIcons = `<svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+<svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 2.6c2.3 0 4.4.9 6 2.4l1.1-1.2A10.2 10.2 0 0 0 8 1C5.3 1 2.8 2 .9 3.8L2 5c1.6-1.5 3.7-2.4 6-2.4zm0 3.3c1.4 0 2.7.5 3.7 1.4l1.1-1.2A7 7 0 0 0 8 4.3c-1.8 0-3.5.7-4.8 1.8l1.1 1.2c1-.9 2.3-1.4 3.7-1.4zm0 3.3c.6 0 1.1.2 1.5.6L8 11.5 6.5 9.8c.4-.4.9-.6 1.5-.6z"/></svg>
+<svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x=".5" y=".5" width="23" height="12" rx="3.8" stroke="currentColor" opacity=".38"/><rect x="2" y="2" width="20" height="9" rx="2.5" fill="currentColor"/><path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2z" fill="currentColor" opacity=".4"/></svg>`;
+
+/* ============ Product art (neutral inline SVG) ============ */
+let UID = 0;
+function mix(hex, amt){ // amt <0 darker, >0 lighter
+  const n = parseInt(hex.slice(1), 16); let r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+  const t = amt < 0 ? 0 : 255, p = Math.abs(amt);
+  r = Math.round(r + (t - r) * p); g = Math.round(g + (t - g) * p); b = Math.round(b + (t - b) * p);
+  return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+}
+const lum = hex => { const n = parseInt(hex.slice(1),16); return (0.3*(n>>16) + 0.59*((n>>8)&255) + 0.11*(n&255)) / 255; };
+function wall(x, y, w, h, rx, pal){
+  const id = "w" + (++UID);
+  return `<defs><clipPath id="${id}"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}"/></clipPath></defs>
+  <g clip-path="url(#${id})"><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${pal[0]}"/>
+  <path d="M${x} ${y+h*.58} C${x+w*.3} ${y+h*.4} ${x+w*.58} ${y+h*.78} ${x+w} ${y+h*.5} V${y+h} H${x} Z" fill="${pal[1]}"/>
+  <path d="M${x} ${y+h*.8} C${x+w*.36} ${y+h*.66} ${x+w*.66} ${y+h*.94} ${x+w} ${y+h*.74} V${y+h} H${x} Z" fill="${pal[2]}"/></g>`;
+}
+function lens(cx, cy, r, body){
+  return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${mix(body,-.28)}"/><circle cx="${cx}" cy="${cy}" r="${r*.74}" fill="#131316"/><circle cx="${cx+r*.25}" cy="${cy-r*.25}" r="${r*.2}" fill="#34343A"/>`;
+}
+function phoneRear(l){
+  const h = l.hex, c = l.art.cam, dark = lum(h) < .45;
+  const plate = dark ? mix(h,.08) : mix(h,-.06);
+  let cam = "";
+  if (c === "pro") cam = `<rect x="65" y="23" width="38" height="38" rx="11" fill="${plate}" class="soft"/>${lens(75.5,33.5,7.4,h)}${lens(75.5,50.5,7.4,h)}${lens(92,42,7.4,h)}<circle cx="92.5" cy="29.5" r="2.4" fill="#EDE8DC"/><circle cx="92.5" cy="54.5" r="1.9" fill="#1C1C1E"/>`;
+  if (c === "dual") cam = `<rect x="65" y="23" width="34" height="34" rx="10" fill="${plate}" class="soft"/>${lens(74,32,6.8,h)}${lens(90,48,6.8,h)}<circle cx="90" cy="32" r="2.2" fill="#EDE8DC"/>`;
+  if (c === "s23") cam = `${lens(76,34,7.6,h)}${lens(76,53,7.6,h)}${lens(76,72,7.6,h)}<circle cx="91" cy="33" r="2" fill="#E8E3D6"/>`;
+  if (c === "redmi") cam = `<rect x="65" y="23" width="28" height="62" rx="12" fill="${plate}" class="soft"/>${lens(79,36,9,h)}${lens(79,58,8,h)}<circle cx="79" cy="76" r="3.4" fill="#1C1C1E"/><circle cx="99" cy="30" r="2" fill="#EDE8DC"/>`;
+  return `<rect x="59" y="16" width="82" height="168" rx="16" fill="${h}" class="edge"/>
+  <rect x="57.6" y="50" width="1.6" height="12" rx=".8" fill="${mix(h,-.2)}"/><rect x="57.6" y="68" width="1.6" height="20" rx=".8" fill="${mix(h,-.2)}"/><rect x="140.8" y="62" width="1.6" height="28" rx=".8" fill="${mix(h,-.2)}"/>${cam}`;
+}
+function phoneFront(l){
+  const pal = l.art.pal || ["#141418","#23232B","#2F3040"];
+  return `<rect x="59" y="16" width="82" height="168" rx="16" fill="${l.hex}" class="edge"/>
+  <rect x="62" y="19" width="76" height="162" rx="13.2" fill="#0B0B0D"/>${wall(64.5,21.5,71,157,11,pal)}
+  <rect x="88" y="27" width="24" height="7.5" rx="3.75" fill="#000"/>`;
+}
+function laptop(l){
+  const a = l.art, pal = a.pal, h = l.hex;
+  const bezel = "#111113";
+  return `<rect x="32" y="42" width="136" height="94" rx="7" fill="${a.notch ? bezel : h}" class="edge"/>
+  <rect x="36.5" y="46.5" width="127" height="85" rx="3" fill="${bezel}"/>${wall(38,48,124,82,2,pal)}
+  ${a.notch ? `<rect x="92.5" y="48" width="15" height="4.2" rx="1.6" fill="${bezel}"/>` : `<circle cx="100" cy="46.8" r=".9" fill="#2A2A2E"/>`}
+  <path d="M18 136.5h164l-3 7.2c-.5 1.3-1.7 2.3-3.2 2.3H24.2c-1.5 0-2.7-1-3.2-2.3z" fill="${mix(h, lum(h) < .3 ? .1 : -.04)}" class="edge"/>
+  <path d="M86 136.5h28v1.4c0 .9-.7 1.6-1.6 1.6H87.6c-.9 0-1.6-.7-1.6-1.6z" fill="${mix(h,-.25)}"/>`;
+}
+function tablet(l){
+  return `<rect x="45" y="22" width="110" height="156" rx="13" fill="${l.hex}" class="edge"/>
+  <rect x="49.5" y="26.5" width="101" height="147" rx="9" fill="#0E0E10"/>${wall(53.5,30.5,93,139,6,l.art.pal)}
+  <rect x="155" y="44" width="1.8" height="14" rx=".9" fill="${mix(l.hex,-.2)}"/>`;
+}
+function watch(l){
+  const h = l.hex, b = l.art.band;
+  return `<path d="M80 12h40l-2.4 44H82.4z" fill="${b}" class="edge"/><path d="M82.4 144h35.2l2.4 44H80z" fill="${b}" class="edge"/>
+  <rect x="81" y="164" width="38" height="2" rx="1" fill="${mix(b,-.25)}"/><rect x="81" y="171" width="38" height="2" rx="1" fill="${mix(b,-.25)}"/>
+  <rect x="63" y="52" width="74" height="96" rx="22" fill="${h}" class="edge"/>
+  <rect x="68" y="57" width="64" height="86" rx="17.5" fill="#050506"/>
+  <rect x="136" y="76" width="6" height="17" rx="2.8" fill="${mix(h,.12)}"/><rect x="136.6" y="100" width="3.6" height="15" rx="1.6" fill="${mix(h,.06)}"/>
+  <text x="100" y="106" text-anchor="middle" font-family="-apple-system,system-ui" font-size="21" font-weight="600" fill="#F5F5F7" letter-spacing="-.5">10:09</text>
+  <text x="100" y="84" text-anchor="middle" font-family="-apple-system,system-ui" font-size="7.5" font-weight="600" fill="#8E8E93" letter-spacing=".4">ПН 28</text>`;
+}
+function earbuds(l){
+  return `<rect x="50" y="58" width="100" height="84" rx="30" fill="#FAFAFA" class="edge"/>
+  <path d="M51 84.5h98" class="edge"/><circle cx="100" cy="104" r="2.1" fill="#CFCFD4"/>
+  <rect x="150" y="112" width="3" height="11" rx="1.5" fill="#E2E2E6" class="edge"/>
+  <rect x="88" y="139.5" width="24" height="2.5" rx="1.25" fill="#D8D8DC"/>`;
+}
+function art(l, view = "rear", cls = ""){
+  if (l.cover) return `<img class="photo ${cls}" src="${l.cover}" alt="${esc(l.model)}" loading="eager">`;
+  const k = l.art.kind; let body = "", vb = "0 0 200 200";
+  if (k === "phone") body = view === "front" ? phoneFront(l) : phoneRear(l);
+  if (view === "detail" && k === "phone"){ vb = "54 12 66 66"; }
+  if (k === "laptop") body = laptop(l);
+  if (k === "tablet") body = tablet(l);
+  if (k === "watch") body = watch(l);
+  if (k === "earbuds") body = earbuds(l);
+  return `<svg viewBox="${vb}" class="${cls}" aria-label="${esc(l.model)}" role="img">${body}</svg>`;
+}
+const artCSS = `<style>.edge{stroke:var(--dev-edge);stroke-width:1;vector-effect:non-scaling-stroke}.soft{stroke:rgba(0,0,0,.08);stroke-width:1;vector-effect:non-scaling-stroke}</style>`;
+document.head.insertAdjacentHTML("beforeend", artCSS);
+
+/* ============ Shared fragments ============ */
+function kitList(l){
+  return `<div class="kitl">${KIT.map(([k, lab]) => l.kit.includes(k) ? `<span>${I.checkS}${lab}</span>` : `<span class="no">${I.dash}${lab}</span>`).join("")}</div>`;
+}
+function buyContent(l, st, compact){
+  if (st.buyDone) return `<div class="done"><div class="okc">${I.okBig}</div><h4>Заявка отправлена.</h4><p>Продавец свяжется с вами.</p><button class="btn tint block press" data-a="done">Готово</button></div>`;
+  return `<div class="lotline"><div class="th">${art(l)}</div><div><b>${esc(l.model)}, ${esc(memStr(l) || l.color)}</b><span>${rub(l.price)} · лот ${l.id}</span></div></div>
+  <h4 class="q">Оставьте контакт. <span>Продавец скоро напишет.</span></h4>
+  <form data-form>
+    <div class="fields">
+      <label class="field"><small>Имя</small><input name="name" value="${esc(st.name)}" placeholder="Как к вам обращаться" autocomplete="name"></label>
+      <label class="field"><small>Телефон или @ник в Telegram</small><input name="contact" value="${esc(st.contact)}" placeholder="+7 900 000-00-00 или @nick" autocomplete="tel"></label>
+    </div>
+    <input class="hp" name="website" tabindex="-1" autocomplete="off">
+    ${st.buyErr ? `<div class="ferr">Укажите телефон или @ник, чтобы продавец мог ответить.</div>` : ""}
+    <p class="fnote">Заявка уйдёт продавцу в Telegram. Оплату и встречу обсудите с ним напрямую.</p>
+    <button class="btn block press" type="submit">Отправить заявку</button>
+  </form>`;
+}
+
+/* ============ Phone ============ */
+class Phone {
+  constructor(id, init){
+    this.el = document.getElementById(id);
+    this.s = Object.assign({screen:"catalog", lot:null, sheet:null, pop:null, menu:false, sub:null, buyDone:false, buyErr:false, name:"", contact:"", slide:0}, init);
+    this.s.sel = mkSel(init.sel);
+    this.anim = false;
+    this.el.addEventListener("click", e => this.click(e));
+    this.el.addEventListener("submit", e => { e.preventDefault(); this.submit(e.target); });
+    this.el.addEventListener("input", e => { if (e.target.name === "name") this.s.name = e.target.value; if (e.target.name === "contact") this.s.contact = e.target.value; });
+    this.el.addEventListener("pointerdown", e => this.drag(e));
+    this.el.addEventListener("scroll", e => this.onScroll(e), true);
+    this.render();
+  }
+  get lot(){ return byId(this.s.lot); }
+  render(){
+    const keep = {}; this.el.querySelectorAll("[data-sc]").forEach(n => keep[n.dataset.sc] = n.scrollTop);
+    const s = this.s;
+    const pushed = s.sheet === "filters";
+    let h = `<div class="sbar ${pushed ? "light" : ""}"><span class="t num">9:41</span><span class="ic">${statusIcons}</span></div>`;
+    h += `<div class="page ${pushed ? "pushed" : ""}" data-sc="page">${s.screen === "item" ? this.item() : this.catalog()}</div>`;
+    if (s.screen === "item") h += this.actionBar();
+    if (s.sheet) h += `<div class="${this.anim ? "anim" : ""}"><div class="scrim" data-a="close"></div>${s.sheet === "filters" ? this.filters() : this.buySheet()}</div>`;
+    if (s.menu) h += this.menu();
+    h += `<div class="home"></div>`;
+    this.el.innerHTML = h;
+    this.el.querySelectorAll("[data-sc]").forEach(n => { if (keep[n.dataset.sc]) n.scrollTop = keep[n.dataset.sc]; });
+    this.anim = false;
+    this.placePop();
+    const g = this.el.querySelector(".gal"); if (g && s.slide) g.scrollLeft = s.slide * 390;
+  }
+  /* --- catalog --- */
+  catalog(){
+    const s = this.s, list = results(s.sel), cat = catOf(s.sel), n = selCount(s.sel);
+    const title = cat ? cat.name : s.sel.model.size === 1 ? shortModel([...s.sel.model][0]) : "Каталог";
+    const sub = n ? `${list.length} из ${offers(LOTS.length)}` : offers(list.length);
+    const pl = (k, base) => {
+      const set = s.sel[k]; let lab = base;
+      if (set.size === 1) lab = G[k].lab([...set][0]); else if (set.size > 1) lab = base + " · " + set.size;
+      if (k === "device" && set.size === 1) lab = DEVICE_PL[[...set][0]];
+      if (k === "price" && set.size){ const [lo, hi] = this.priceIdx(); lab = lo === 0 ? "до " + STOPS[hi]/1000 + " тыс." : hi === 4 ? "от " + STOPS[lo]/1000 + " тыс." : STOPS[lo]/1000 + "–" + STOPS[hi]/1000 + " тыс."; }
+      return `<button class="pill press ${set.size ? "on" : ""}" data-a="pop" data-k="${k}" data-pill="${k}">${lab}${I.chevD}</button>`;
+    };
+    return `<div class="m-top"><div class="m-nav"><span class="m-brand">${SHOP}</span><button class="icon-btn" data-a="menu" aria-label="Меню">${I.menu}</button></div></div>
+    <div class="ltitle"><h1>${title}</h1><p class="num">${sub}</p></div>
+    <div class="m-top" style="padding-top:0;top:98px;z-index:19"><div class="pills-wrap"><div class="pills hs">
+      <button class="pill press ${n ? "on" : ""}" data-a="filters">${I.sliders}Фильтры${n ? `<span class="badge">${n}</span>` : ""}</button>
+      ${pl("device","Устройство")}${pl("price","Цена")}${pl("grade","Состояние")}
+    </div>${s.pop ? this.pop() : ""}</div></div>
+    <div class="grid2">${list.length ? list.map(l => this.tile(l)).join("") : `<div class="empty">Ничего не нашлось. Попробуйте убрать фильтр.</div>`}</div>`;
+  }
+  tile(l){
+    return `<button class="tile press" data-a="lot" data-id="${l.id}">
+      <div class="tile-img">${art(l)}${l.video ? `<span class="vbadge">${I.play}Видео</span>` : ""}</div>
+      <div class="tile-name">${esc(l.model)}</div><div class="tile-spec">${specLine(l)}</div><div class="tile-price num">${rub(l.price)}</div></button>`;
+  }
+  pop(){
+    const k = this.s.pop, f = facet(k, this.s.sel), none = !this.s.sel[k].size;
+    const allLab = {device:"Все устройства", price:"Любая цена", grade:"Любое состояние"}[k];
+    const rows = f.map(o => {
+      const lab = k === "device" ? DEVICE_PL[o.v] : o.label;
+      const ds = k === "grade" ? `<span class="ds">${GRADE[o.v].long}</span>` : "";
+      const dim = !o.n && !o.on;
+      return `<button class="pop-i ${dim ? "dim" : ""}" ${dim ? "" : `data-a="pv" data-k="${k}" data-v="${o.v}"`}><span class="ck">${o.on ? I.check : ""}</span><span>${lab}</span><span class="c">${o.n}</span>${ds}</button>`;
+    }).join("");
+    return `<div class="pop" data-popbox><div class="pop-k">${G[k].label}</div>
+      <button class="pop-i" data-a="pall" data-k="${k}"><span class="ck">${none ? I.check : ""}</span><span>${allLab}</span><span class="c"></span></button><div class="pop-sep"></div>${rows}</div>`;
+  }
+  placePop(){
+    const p = this.el.querySelector("[data-popbox]"); if (!p) return;
+    const b = this.el.querySelector(`[data-pill="${this.s.pop}"]`), wrap = p.parentElement;
+    const x = b.getBoundingClientRect().left - wrap.getBoundingClientRect().left;
+    p.style.left = Math.min(Math.max(12, x), 390 - 12 - p.offsetWidth) + "px"; p.style.top = "56px";
+  }
+  priceIdx(){
+    const set = this.s.sel.price; if (!set.size) return [0, 4];
+    const idx = [...set].map(v => PRICE.findIndex(p => p[0] === v)); return [Math.min(...idx), Math.max(...idx) + 1];
+  }
+  /* --- filters sheet --- */
+  filters(){
+    const s = this.s, total = results(s.sel).length, n = selCount(s.sel);
+    return `<div class="sheet full"><div class="grabber"></div>
+      <div class="sheet-head"><span></span><h3>Фильтры</h3><button class="x-btn press" data-a="close" aria-label="Закрыть">${I.x}</button></div>
+      <div class="sheet-body" data-sc="fsheet">
+        ${this.priceSec()}
+        <section class="f-sec"><h4>Состояние</h4><div class="body">${this.gradeSeg()}</div></section>
+        ${this.listSec("device")}${this.listSec("brand")}${this.listSec("model", 5)}
+        ${this.chipSec("storage")}${this.chipSec("battery")}${this.chipSec("kit")}${this.chipSec("color", 0, true)}
+      </div>
+      <div class="sheet-foot"><button class="link-btn" data-a="reset" ${n ? "" : "disabled"}>Сбросить</button>
+        <button class="btn press num" data-a="close" ${total ? "" : "disabled"}>${total ? "Показать " + offers(total) : "Ничего не найдено"}</button></div></div>`;
+  }
+  priceSec(){
+    const s = this.s, pool = LOTS.filter(l => matches(l, s.sel, "price"));
+    const bins = Array(18).fill(0); pool.forEach(l => bins[Math.min(17, Math.floor(l.price / 10000))]++);
+    const max = Math.max(1, ...bins), [lo, hi] = this.priceIdx();
+    const x = i => (STOPS[i] / 180000 * 100);
+    const bars = bins.map((c, i) => { const mid = i * 10000 + 5000; const inr = mid >= STOPS[lo] && (hi === 4 || mid < STOPS[hi]);
+      return `<i class="${inr ? "in" : ""} ${c ? "" : "z"}" style="height:${c / max * 100}%"></i>`; }).join("");
+    const minTxt = lo === 0 ? "Любая" : rub(STOPS[lo]), maxTxt = hi === 4 ? "Любая" : rub(STOPS[hi]);
+    return `<section class="f-sec"><h4>Цена</h4><p class="sub">Шаги совпадают с ценовыми тегами лотов</p><div class="body">
+      <div class="hist">${bars}</div>
+      <div class="range" data-range><div class="rail"></div><div class="fillr" style="left:${x(lo)}%;width:${x(hi) - x(lo)}%"></div>
+        <div class="knob" data-thumb="lo" style="left:${x(lo)}%"></div><div class="knob" data-thumb="hi" style="left:${x(hi)}%"></div></div>
+      <div class="ticks">${STOPS.map((v, i) => `<span style="left:${x(i)}%">${i === 4 ? "100+ тыс." : v ? v / 1000 : "0"}</span>`).join("")}</div>
+      <div class="minmax"><div class="fld"><small>Минимум</small><b>${minTxt}</b></div><span class="dash"></span><div class="fld"><small>Максимум</small><b>${maxTxt}</b></div></div>
+    </div></section>`;
+  }
+  gradeSeg(){
+    const s = this.s, f = facet("grade", s.sel), set = s.sel.grade;
+    const cur = set.size === 1 ? [...set][0] : set.size ? "multi" : "";
+    const labs = {A:"Идеал", B:"Хорошее", C:"Следы"};
+    const btn = (v, lab, dim) => `<button class="${cur === v ? "on" : ""} ${dim ? "dim" : ""}" ${dim ? "" : `data-a="seg" data-v="${v}"`}>${lab}</button>`;
+    const note = cur && cur !== "multi" ? `${GRADE[cur].short}: ${GRADE[cur].long.toLowerCase()}.` : "Любое: от «Идеал» до «Заметных следов».";
+    return `<div class="seg">${btn("", "Любое", false)}${f.map(o => btn(o.v, labs[o.v], !o.n)).join("")}</div><p class="seg-note">${note}</p>`;
+  }
+  listSec(k, limit){
+    const f = facet(k, this.s.sel); const shown = limit && !this.s["more_" + k] ? f.slice(0, limit) : f;
+    return `<section class="f-sec"><h4>${G[k].label}</h4><div class="body"><div class="group">${shown.map(o => {
+      const dim = !o.n && !o.on; const lab = k === "device" ? DEVICE_PL[o.v] : o.label;
+      return `<button class="grow ${dim ? "dim" : ""}" ${dim ? "" : `data-a="tg" data-k="${k}" data-v="${esc(o.v)}"`}><span class="l">${esc(lab)}</span><span class="c">${o.n}</span><span class="ck">${o.on ? I.check : ""}</span></button>`;
+    }).join("")}</div>${limit && f.length > limit && !this.s["more_" + k] ? `<button class="more" data-a="more" data-k="${k}">Ещё ${f.length - limit}</button>` : ""}</div></section>`;
+  }
+  chipSec(k, _, dots){
+    const f = facet(k, this.s.sel);
+    return `<section class="f-sec"><h4>${G[k].label}</h4><div class="body"><div class="chips">${f.map(o => {
+      const dim = !o.n && !o.on, l = dots ? LOTS.find(x => x.color === o.v) : null;
+      return `<button class="chip press ${o.on ? "on" : ""} ${dim ? "dim" : ""}" ${dim ? "" : `data-a="tg" data-k="${k}" data-v="${esc(o.v)}"`}>${l ? `<i class="dot" style="background:${l.hex}"></i>` : ""}${esc(o.label)}<span class="c">${o.n}</span></button>`;
+    }).join("")}</div></div></section>`;
+  }
+  /* --- item --- */
+  item(){
+    const l = this.lot, [a, b] = headParts(l);
+    const slides = l.cover ? [art(l)] : l.art.kind === "phone" ? [art(l,"rear"), art(l,"front"), art(l,"detail")] : [art(l)];
+    const rows = [
+      ["Модель", esc(l.model)],
+      l.device === "laptop" ? ["Память", `${l.variant} / ${l.storage} ГБ SSD`] : l.storage ? ["Память", l.storage + " ГБ"] : ["Вариант", l.variant],
+      ["Цвет", l.color],
+      ["Состояние", `${l.grade} · ${GRADE[l.grade].short}`]
+    ];
+    return `<div class="m-top"><div class="m-nav"><button class="back" data-a="back">${I.back}Каталог</button><span class="m-lotid">Лот ${l.id}</span><span style="width:44px"></span></div></div>
+      <div class="gal hs" data-gal>${slides.map(sl => `<div class="sl"><div class="fr">${sl}</div></div>`).join("")}</div>
+      ${slides.length > 1 ? `<div class="dots">${slides.map((_, i) => `<i class="${i === this.s.slide ? "on" : ""}"></i>`).join("")}</div>` : ""}
+      <div class="it-head"><div class="kick">Опубликован ${dateRel(l.pub)}</div><h2 class="h2t">${esc(a)} <span>${esc(b)}</span></h2>
+        <div class="price-hero">${rub(l.price)}</div>
+        <div class="grade-line"><b>${GRADE[l.grade].short}.</b> ${GRADE[l.grade].long}</div></div>
+      <h3 class="sec-t">Характеристики</h3>
+      <div class="group inset">
+        ${rows.map(([k, v]) => `<div class="srow"><span class="k">${k}</span><span class="v">${v}</span></div>`).join("")}
+        ${l.battery != null ? `<div class="srow col"><div class="top"><span class="k">Ёмкость аккумулятора</span><span class="v">${l.battery}%</span></div><div class="bar"><i style="width:${l.battery}%"></i></div></div>` : ""}
+        <div class="srow col"><div class="top"><span class="k">Комплект</span><span class="v">${l.kit.length} из 4</span></div>${kitList(l)}</div>
+      </div>
+      ${l.note ? `<h3 class="sec-t">От продавца</h3><div class="note"><p>${esc(l.note)}</p></div>` : ""}
+      <p class="meta num">Лот ${l.id} · опубликован ${dateLong(l.pub)}<br>Продавец отвечает в Telegram.</p>`;
+  }
+  actionBar(){
+    const l = this.lot;
+    return `<div class="abar"><a class="btn tint press" href="${l.seller || "#"}" target="_blank" rel="noopener" data-a="write">Написать</a><button class="btn main press" data-a="buy">Купить</button></div>`;
+  }
+  buySheet(){ return `<div class="sheet"><div class="grabber"></div><div class="sheet-head"><span></span><span></span><button class="x-btn press" data-a="close" aria-label="Закрыть">${I.x}</button></div><div class="buy">${buyContent(this.lot, this.s)}</div></div>`; }
+  submit(form){
+    if (form.website && form.website.value) return;
+    const c = (form.contact.value || "").trim(); this.s.contact = c; this.s.name = form.name.value;
+    if (!c){ this.s.buyErr = true; this.render(); return; }
+    this.s.buyErr = false; this.s.buyDone = true; this.render();
+  }
+  /* --- menu (apple-mobile-nav) --- */
+  menu(){
+    const sub = this.s.sub ? CATS.find(c => c.k === this.s.sub) : null;
+    return `<div class="menu ${this.anim ? "anim-menu" : ""}">
+      <div class="menu-bar">${sub ? `<button class="icon-btn" data-a="mback" aria-label="Назад">${I.back}</button>` : "<span></span>"}<button class="icon-btn" data-a="mclose" aria-label="Закрыть">${I.xl}</button></div>
+      <div class="menu-track ${sub ? "sub" : ""}">
+        <div class="menu-p">${CATS.map(c => { const n = catLots(c).length; return `<button class="mi ${n ? "" : "dim"}" ${n ? `data-a="msub" data-c="${c.k}"` : ""}><span>${c.name}</span><span class="c">${n}</span></button>`; }).join("")}
+          <div class="mk">Магазин</div>
+          <button class="ms" data-a="mall"><span>Все предложения</span><span class="c">${LOTS.length}</span></button>
+          <a class="ms" href="#"><span>Канал в Telegram</span><span class="c">${I.chevR}</span></a>
+          <a class="ms" href="#"><span>Написать продавцу</span><span class="c">${I.chevR}</span></a>
+          <p class="menu-foot">${SHOP}<br>Б/у техника. Новые лоты сначала появляются в канале.</p></div>
+        <div class="menu-p">${sub ? this.subMenu(sub) : ""}</div>
+      </div></div>`;
+  }
+  subMenu(c){
+    const lots = catLots(c), models = [...new Set(lots.map(l => l.model))];
+    const pool = lots;
+    const cnt = (fn) => pool.filter(fn).length;
+    return `<button class="mi" data-a="mcat" data-c="${c.k}"><span>Все ${c.k === "other" ? "устройства" : c.name}</span><span class="c">${lots.length}</span></button>
+      ${models.map(m => `<button class="mi" data-a="mmodel" data-c="${c.k}" data-v="${esc(m)}"><span>${esc(shortModel(m))}</span><span class="c">${cnt(l => l.model === m)}</span></button>`).join("")}
+      <div class="mk">Состояние</div>
+      ${["A","B","C"].map(g => { const n = cnt(l => l.grade === g); return `<button class="ms ${n ? "" : "dim"}" ${n ? `data-a="mgrade" data-c="${c.k}" data-v="${g}"` : ""}><span>${GRADE[g].short}</span><span class="c">${n}</span></button>`; }).join("")}
+      <div class="mk">Цена</div>
+      ${PRICE.map(([k, lab]) => { const n = cnt(l => priceBand(l.price) === k); return `<button class="ms ${n ? "" : "dim"}" ${n ? `data-a="mprice" data-c="${c.k}" data-v="${k}"` : ""}><span>${lab}</span><span class="c">${n}</span></button>`; }).join("")}`;
+  }
+  /* --- events --- */
+  click(e){
+    const t = e.target.closest("[data-a]"); const s = this.s;
+    if (s.pop && !e.target.closest("[data-popbox]") && !(t && t.dataset.a === "pop")){ s.pop = null; this.render(); if (!t) return; }
+    if (!t) return;
+    const a = t.dataset.a, k = t.dataset.k, v = t.dataset.v;
+    const toggle = (k, v) => { const set = s.sel[k]; set.has(v) ? set.delete(v) : set.add(v); };
+    const applyCat = (c, extra) => { s.sel = mkSel(Object.assign({}, c.sel, extra || {})); s.menu = false; s.sub = null; s.screen = "catalog"; s.pop = null; };
+    switch (a){
+      case "pop": s.pop = s.pop === k ? null : k; break;
+      case "pv": toggle(k, v); break;
+      case "pall": s.sel[k].clear(); break;
+      case "filters": s.sheet = "filters"; s.pop = null; this.anim = true; break;
+      case "close": s.sheet = null; if (s.buyDone){ s.buyDone = false; } break;
+      case "done": s.sheet = null; s.buyDone = false; s.contact = ""; break;
+      case "reset": s.sel = emptySel(); break;
+      case "tg": toggle(k, v); break;
+      case "more": s["more_" + k] = true; break;
+      case "seg": s.sel.grade.clear(); if (v) s.sel.grade.add(v); break;
+      case "lot": s.screen = "item"; s.lot = t.dataset.id; s.slide = 0; this.el.querySelector("[data-sc=page]").scrollTop = 0; break;
+      case "back": s.screen = "catalog"; break;
+      case "buy": s.sheet = "buy"; s.buyErr = false; this.anim = true; break;
+      case "write": if (!byId(s.lot).seller) e.preventDefault(); return;
+      case "menu": s.menu = true; s.sub = null; this.anim = true; break;
+      case "mclose": s.menu = false; break;
+      case "msub": this.slideMenu(t.dataset.c); return;
+      case "mback": this.slideMenu(null); return;
+      case "mall": s.sel = emptySel(); s.menu = false; s.screen = "catalog"; break;
+      case "mcat": applyCat(CATS.find(c => c.k === t.dataset.c)); break;
+      case "mmodel": applyCat(CATS.find(c => c.k === t.dataset.c), {model:[v]}); break;
+      case "mgrade": applyCat(CATS.find(c => c.k === t.dataset.c), {grade:[v]}); break;
+      case "mprice": applyCat(CATS.find(c => c.k === t.dataset.c), {price:[v]}); break;
+      default: return;
+    }
+    if (a === "filters" || a === "close" || a === "reset") {}
+    this.render();
+  }
+  slideMenu(k){
+    const track = this.el.querySelector(".menu-track");
+    if (k){ this.s.sub = k; track.children[1].innerHTML = this.subMenu(CATS.find(c => c.k === k)); requestAnimationFrame(() => track.classList.add("sub"));
+      this.el.querySelector(".menu-bar").firstElementChild.outerHTML = `<button class="icon-btn" data-a="mback" aria-label="Назад">${I.back}</button>`; }
+    else { this.s.sub = null; track.classList.remove("sub"); this.el.querySelector(".menu-bar").firstElementChild.outerHTML = "<span></span>"; }
+  }
+  onScroll(e){
+    const n = e.target;
+    if (n.classList && n.classList.contains("page")){ const tops = n.querySelectorAll(".m-top"); const last = tops[tops.length - 1]; tops.forEach(t => t.classList.remove("scrolled")); if (n.scrollTop > 4 && last) last.classList.add("scrolled"); }
+    if (n.dataset && n.dataset.gal !== undefined){ const i = Math.round(n.scrollLeft / 390); if (i !== this.s.slide){ this.s.slide = i; this.el.querySelectorAll(".dots i").forEach((d, j) => d.classList.toggle("on", j === i)); } }
+  }
+  drag(e){
+    const th = e.target.closest("[data-thumb]"); if (!th) return; e.preventDefault();
+    const which = th.dataset.thumb;
+    const move = ev => {
+      const r = this.el.querySelector("[data-range]").getBoundingClientRect();
+      const val = Math.max(0, Math.min(1, (ev.clientX - r.left) / r.width)) * 180000;
+      let best = 0; STOPS.forEach((st, i) => { if (Math.abs(st - val) < Math.abs(STOPS[best] - val)) best = i; });
+      let [lo, hi] = this.priceIdx();
+      if (which === "lo") lo = Math.min(best, hi - 1); else hi = Math.max(best, lo + 1);
+      const set = this.s.sel.price, before = [...set].join();
+      set.clear(); if (!(lo === 0 && hi === 4)) for (let i = lo; i < hi; i++) set.add(PRICE[i][0]);
+      if ([...set].join() !== before) this.render();
+    };
+    const up = () => { window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", up); };
+    window.addEventListener("pointermove", move); window.addEventListener("pointerup", up);
+  }
+}
+
+/* ============ Desktop ============ */
+class Desk {
+  constructor(id, init){
+    this.el = document.getElementById(id);
+    this.s = Object.assign({view:"catalog", lot:null, flyout:null, pin:false, open:new Set(["device","grade","brand"]), sidebar:true, modal:false, buyDone:false, buyErr:false, name:"", contact:"", thumb:0}, init);
+    this.s.sel = mkSel(init.sel); if (init.open) this.s.open = new Set(init.open);
+    this.el.addEventListener("click", e => this.click(e));
+    this.el.addEventListener("submit", e => { e.preventDefault(); this.submit(e.target); });
+    this.el.addEventListener("input", e => { if (e.target.name === "name") this.s.name = e.target.value; if (e.target.name === "contact") this.s.contact = e.target.value; });
+    this.el.addEventListener("mouseover", e => { const it = e.target.closest("[data-fly]"); if (it && !this.s.pin && this.s.flyout !== it.dataset.fly){ this.s.flyout = it.dataset.fly; this.render(); } });
+    this.el.addEventListener("mouseleave", () => { if (!this.s.pin && this.s.flyout){ this.s.flyout = null; this.render(); } });
+    this.render();
+  }
+  render(){
+    const sc = this.el.querySelector(".d-page"); const top = sc ? sc.scrollTop : 0;
+    const s = this.s, url = s.view === "item" ? `${SITE}/item/${s.lot}` : SITE;
+    this.el.innerHTML = `<div class="win-bar"><div class="dots3"><i></i><i></i><i></i></div><div class="url">${I.lock}${url}</div><span></span></div>
+      <div class="win-body">${this.gnav()}
+        <div class="d-page ${s.flyout ? "under" : ""}">${s.view === "item" ? this.item() : this.catalog()}</div>
+        ${s.flyout ? `<div class="veil" data-a="flyclose"></div>${this.flyout()}` : ""}
+        ${s.modal ? `<div class="modal-wrap" data-a="mclose"><div class="modal" data-stop><div class="sheet-head"><span></span><span></span><button class="x-btn press" data-a="mclose" aria-label="Закрыть">${I.x}</button></div><div class="buy">${buyContent(byId(s.lot), s)}</div></div></div>` : ""}
+      </div>`;
+    const n = this.el.querySelector(".d-page"); if (n) n.scrollTop = top;
+  }
+  gnav(){
+    return `<nav class="gnav ${this.s.flyout ? "flat" : ""}"><div class="gnav-in"><button class="brand" data-a="home">${SHOP}</button>
+      ${CATS.map(c => `<button class="it ${this.s.flyout === c.k ? "on" : ""}" data-fly="${c.k}" data-a="cat" data-c="${c.k}">${c.name}</button>`).join("")}
+      <a class="tg" href="#">Канал в Telegram</a></div></nav>`;
+  }
+  flyout(){
+    const c = CATS.find(x => x.k === this.s.flyout), lots = catLots(c), models = [...new Set(lots.map(l => l.model))];
+    const cnt = fn => lots.filter(fn).length;
+    const newest = lots.slice().sort((a, b) => b.pub.localeCompare(a.pub)).slice(0, 2);
+    return `<div class="flyout"><div class="fly-in">
+      <div><div class="fk">${c.name}</div>
+        <button class="fb" data-a="fcat" data-c="${c.k}">Все ${c.k === "other" ? "устройства" : c.name}<span class="c">${lots.length}</span></button>
+        ${models.map(m => `<button class="fb" data-a="fmodel" data-c="${c.k}" data-v="${esc(m)}">${esc(shortModel(m))}<span class="c">${cnt(l => l.model === m)}</span></button>`).join("")}</div>
+      <div><div class="fk">Состояние</div>${["A","B","C"].map(g => { const n = cnt(l => l.grade === g); return `<button class="fs ${n ? "" : "dim"}" ${n ? `data-a="fgrade" data-c="${c.k}" data-v="${g}"` : ""}><span>${GRADE[g].short}</span><span class="c">${n}</span></button>`; }).join("")}</div>
+      <div><div class="fk">Цена</div>${PRICE.map(([k, lab]) => { const n = cnt(l => priceBand(l.price) === k); return `<button class="fs ${n ? "" : "dim"}" ${n ? `data-a="fprice" data-c="${c.k}" data-v="${k}"` : ""}><span>${lab}</span><span class="c">${n}</span></button>`; }).join("")}</div>
+      <div><div class="fk">Новое в разделе</div>${newest.map(l => `<button class="fn" data-a="lot" data-id="${l.id}"><span class="th">${art(l)}</span><span><b>${esc(l.model)}</b><span>${memStr(l)} · ${rub(l.price)}</span></span></button>`).join("")}</div>
+    </div></div>`;
+  }
+  catalog(){
+    const s = this.s, list = results(s.sel), n = selCount(s.sel), cat = catOf(s.sel);
+    const applied = GROUPS.flatMap(g => [...s.sel[g.k]].map(v => ({k:g.k, v, lab:g.k === "device" ? DEVICE_PL[v] : g.lab(v)})));
+    return `<div class="lnav"><div class="lnav-in"><h2>${cat ? cat.name : "Вся техника"}</h2><div class="r"><span class="num">${n ? list.length + " из " + LOTS.length : offers(list.length)}</span><a href="#">Как устроена покупка</a></div></div></div>
+      <div class="d-wrap">
+        <div class="d-hero"><h1>Б/у техника. <span>Каждое предложение — одно конкретное устройство.</span></h1></div>
+        <div class="fbar"><div class="l"><button class="tgl" data-a="sb">${I.sliders}${s.sidebar ? "Скрыть фильтры" : "Показать фильтры"}</button>
+          <div class="ap">${applied.map(o => `<button class="apc" data-a="tg" data-k="${o.k}" data-v="${esc(o.v)}">${esc(o.lab)}${I.xs}</button>`).join("")}</div></div>
+          <span class="sort">Сортировка: <b>сначала новые</b></span></div>
+        <div class="d-cat ${s.sidebar ? "" : "nosb"}"><aside class="sb">${s.sidebar ? GROUPS.map(g => this.acc(g)).join("") : ""}</aside>
+          <div class="dgrid">${list.map(l => this.cell(l)).join("")}</div></div>
+      </div>`;
+  }
+  acc(g){
+    const open = this.s.open.has(g.k), f = open ? facet(g.k, this.s.sel) : [];
+    return `<div class="acc ${open ? "open" : ""}"><button class="acc-h" data-a="acc" data-k="${g.k}">${g.label}${I.chevD14}</button>
+      ${open ? `<div class="acc-b">${f.map(o => { const dim = !o.n && !o.on; const lab = g.k === "device" ? DEVICE_PL[o.v] : o.label;
+        return `<button class="av ${o.on ? "on" : ""} ${dim ? "dim" : ""}" ${dim ? "" : `data-a="tg" data-k="${g.k}" data-v="${esc(o.v)}"`}><span>${esc(lab)}</span><span class="c">${o.on ? I.checkS : o.n}</span></button>`; }).join("")}</div>` : ""}</div>`;
+  }
+  cell(l){
+    return `<button class="dcell" data-a="lot" data-id="${l.id}"><div class="im">${art(l)}${l.video ? `<span class="vbadge">${I.play}Видео</span>` : ""}</div>
+      <div class="nm">${esc(l.model)}, ${esc(l.color)}</div><div class="sp">${specLine(l)}</div><div class="pr">${rub(l.price)}</div></button>`;
+  }
+  item(){
+    const l = byId(this.s.lot), [a, b] = headParts(l);
+    const views = l.cover ? [art(l)] : l.art.kind === "phone" ? [art(l,"rear"), art(l,"front"), art(l,"detail")] : [art(l)];
+    const cur = views[this.s.thumb] || views[0];
+    const stats = [];
+    if (l.device === "laptop"){ stats.push([l.variant, "Оперативная память"]); stats.push([l.storage + " ГБ", "Накопитель SSD"]); }
+    else if (l.storage) stats.push([l.storage + " ГБ", "Память"]); else stats.push([l.variant, "Вариант"]);
+    stats.push([l.battery != null ? l.battery + "%" : "—", "Аккумулятор"]);
+    stats.push([l.grade, "Состояние · " + GRADE[l.grade].short]);
+    const rows = [
+      ["Устройство", DEVICE[l.device]], ["Производитель", l.brand], ["Модель", esc(l.model)],
+      ["Оперативная память", l.device === "laptop" ? l.variant : "—"], ["Накопитель", l.storage ? l.storage + " ГБ" : "—"],
+      ["Цвет", l.color],
+      ["Ёмкость аккумулятора", l.battery != null ? `${l.battery}%<div class="bar"><i style="width:${l.battery}%"></i></div>` : "—"],
+      ["Состояние", `${l.grade} · ${GRADE[l.grade].short} <span class="mute">— ${GRADE[l.grade].long.toLowerCase()}</span>`],
+      ["Комплект", KIT.map(([k, lab]) => l.kit.includes(k) ? lab : `<span class="mute" style="opacity:.5">${lab}</span>`).join('<span class="mute"> · </span>')],
+      ["Лот", `${l.id} · опубликован ${dateLong(l.pub)}`]
+    ];
+    const cat = CATS.find(c => c.k === l.cat);
+    return `<div class="lnav"><div class="lnav-in"><div class="crumbs"><button data-a="home">Каталог</button>${I.chevR}<button data-a="cat" data-c="${cat.k}">${cat.name}</button>${I.chevR}<span>${esc(l.model)}</span></div><div class="r"><span class="num">Лот ${l.id}</span></div></div></div>
+      <div class="d-wrap"><div class="d-item">
+        <div>
+          <div class="d-gal"><div class="big">${cur}</div>
+            ${views.length > 1 ? `<div class="thumbs">${views.map((v, i) => `<button class="${i === this.s.thumb ? "on" : ""}" data-a="thumb" data-i="${i}">${v}</button>`).join("")}</div>` : ""}</div>
+          <div class="stats">${stats.map(([v, c]) => `<div class="stat"><b>${v}</b><span>${c}</span></div>`).join("")}</div>
+          <h3 class="d-sect">Характеристики</h3>
+          <div class="tbl">${rows.map(([k, v]) => `<div class="tr"><span class="k">${k}</span><span class="v">${v}</span></div>`).join("")}</div>
+        </div>
+        <aside class="sum">
+          <div class="kick">Опубликован ${dateLong(l.pub)}</div>
+          <h2 class="h2t">${esc(a)} <span>${esc(b)}</span></h2>
+          <div class="price-hero">${rub(l.price)}</div>
+          <div class="grade-line"><b>${GRADE[l.grade].short}.</b> ${GRADE[l.grade].long}</div>
+          <div class="acts"><button class="btn block press" data-a="buy">Купить</button><a class="btn tint block press" href="${l.seller || "#"}" target="_blank" rel="noopener" data-a="write">Написать продавцу</a></div>
+          <p class="fnote">«Купить» отправляет продавцу заявку с вашим контактом, он скоро ответит. «Написать» открывает чат в Telegram.</p>
+          <div class="card"><h5>Комплект</h5>${kitList(l)}</div>
+          ${l.note ? `<div class="card"><h5>От продавца</h5><p>${esc(l.note)}</p></div>` : ""}
+        </aside>
+      </div></div>`;
+  }
+  submit(form){
+    if (form.website && form.website.value) return;
+    const c = (form.contact.value || "").trim(); this.s.contact = c; this.s.name = form.name.value;
+    this.s.buyErr = !c; this.s.buyDone = !!c; this.render();
+  }
+  click(e){
+    const t = e.target.closest("[data-a]"); if (!t) return;
+    if (t.dataset.a === "mclose" && e.target.closest("[data-stop]") && !e.target.closest(".x-btn")) return;
+    const s = this.s, a = t.dataset.a, k = t.dataset.k, v = t.dataset.v, c = CATS.find(x => x.k === t.dataset.c);
+    const go = extra => { s.sel = mkSel(Object.assign({}, c.sel, extra || {})); s.view = "catalog"; if (!s.pin) s.flyout = null; };
+    switch (a){
+      case "home": s.sel = emptySel(); s.view = "catalog"; break;
+      case "cat": case "fcat": go(); break;
+      case "fmodel": go({model:[v]}); break;
+      case "fgrade": go({grade:[v]}); break;
+      case "fprice": go({price:[v]}); break;
+      case "flyclose": if (!s.pin) s.flyout = null; break;
+      case "tg": { const set = s.sel[k]; set.has(v) ? set.delete(v) : set.add(v); break; }
+      case "acc": s.open.has(k) ? s.open.delete(k) : s.open.add(k); break;
+      case "sb": s.sidebar = !s.sidebar; break;
+      case "lot": s.view = "item"; s.lot = t.dataset.id; s.thumb = 0; if (!s.pin) s.flyout = null; { const p = this.el.querySelector(".d-page"); if (p) p.scrollTop = 0; } break;
+      case "thumb": s.thumb = +t.dataset.i; break;
+      case "buy": s.modal = true; s.buyErr = false; break;
+      case "mclose": case "done": s.modal = false; s.buyDone = false; if (a === "done") s.contact = ""; break;
+      case "write": if (!byId(s.lot).seller) e.preventDefault(); return;
+      default: return;
+    }
+    this.render();
+  }
+}
+
+/* ============ Board ============ */
+document.querySelector("[data-shop-kicker]").textContent = SHOP + " · макет витрины · сентябрь 2026";
+document.getElementById("notes").innerHTML = `
+  <h3>Что держит язык. <span>Шесть правил из двенадцати, на которых стоят экраны.</span></h3>
+  <ol>
+    <li><b>Одно действие на экран.</b> <span>Синий получают только «Купить», ссылки и выбранные значения.</span></li>
+    <li><b>Иерархия кеглем и серым.</b> <span>Без рамок, плашек и иконок ради иконок.</span></li>
+    <li><b>Группы вместо рамок.</b> <span>Инсет-группы #F5F5F7, разделитель начинается от текста.</span></li>
+    <li><b>Недоступное приглушено.</b> <span>Пустые значения фильтров остаются на месте, раскладка не прыгает.</span></li>
+    <li><b>Итог перед глазами.</b> <span>Счётчик в шторке, панель действий и липкая сводка цены.</span></li>
+    <li><b>Честные слова.</b> <span>«Продавец скоро напишет», без выдуманных сроков.</span></li>
+  </ol>
+  <div class="k">Токены</div>
+  <div class="swatches">
+    <div class="sw"><i style="background:#1D1D1F"></i><span>label</span></div>
+    <div class="sw"><i style="background:#6E6E73"></i><span>label-2</span></div>
+    <div class="sw"><i style="background:#F5F5F7"></i><span>fill</span></div>
+    <div class="sw"><i style="background:#0071E3"></i><span>accent</span></div>
+  </div>
+  <div class="k">Намеренно нет</div>
+  <p class="not">Текстового поиска, избранного, корзины, оплаты, рейтингов и таб-бара. Этих функций нет в продукте, поэтому нет и в макете.</p>`;
+
+const phones = [
+  new Phone("m1", {sel:{grade:["A"]}, pop:"device"}),
+  new Phone("m2", {sel:{device:["phone"]}, sheet:"filters"}),
+  new Phone("m3", {screen:"item", lot:"K7Q2MD"}),
+  new Phone("m4", {screen:"item", lot:"K7Q2MD", sheet:"buy", name:"Артём"}),
+  new Phone("m5", {menu:true})
+];
+const desks = [
+  new Desk("d1", {sel:{grade:["A"]}}),
+  new Desk("d2", {flyout:"mac", pin:true}),
+  new Desk("d3", {view:"item", lot:"M3P14K"})
+];
+document.getElementById("theme").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  document.documentElement.dataset.theme = b.dataset.t;
+  document.querySelectorAll("#theme button").forEach(x => x.classList.toggle("on", x === b));
+});
+</script>
+</body>
+</html>
